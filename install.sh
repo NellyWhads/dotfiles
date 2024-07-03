@@ -83,6 +83,9 @@ elif [ "$MACHINE" = "Arch" ]; then
     pacman -S curl git --noconfirm
 fi
 
+python --version
+command -v python
+command -v pyenv
 printf '\e[34m%s\e[0m\n' "Installing Dependancy: Python 3.x ..." 1>&2
 if ! python --version &>/dev/null; then
     curl https://pyenv.run | bash
