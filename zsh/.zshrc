@@ -11,7 +11,6 @@ antigen bundle thefuck
 antigen bundle safe-paste
 antigen bundle tmux
 antigen bundle direnv
-antigen bundle pyenv
 
 antigen theme nellywhads/alien-minimal alien-minimal
 
@@ -19,7 +18,6 @@ antigen bundle unixorn/autoupdate-antigen.zshplugin
 antigen bundle Valiev/almostontop
 antigen bundle zdharma-continuum/history-search-multi-word@main
 antigen bundle lukechilds/zsh-nvm
-antigen bundle mattberther/zsh-pyenv
 antigen bundle willghatch/zsh-saneopt
 antigen bundle zsh-users/zsh-autosuggestions
 antigen bundle zsh-users/zsh-completions
@@ -51,13 +49,6 @@ alias icode='code-insiders'
 
 # Add user packages/scripts/tools to path
 PATH=$PATH:"$HOME/.local/bin"
-
-# Add pyenv to path
-PYENV_ROOT="${PYENV_ROOT:-$HOME/.pyenv}"
-if [[ -d $PYENV_ROOT/bin ]]; then
-    PATH="$PYENV_ROOT/bin:$PATH"
-    eval "$(pyenv init -)"
-fi
 
 # Add fuck alias
 eval "$(thefuck --alias)"
