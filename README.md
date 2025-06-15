@@ -3,8 +3,8 @@ My dotfiles for a clean OS rampup.
 
 ## Supported OSes (detected automatically)
 
-- Ubuntu (Tested on >= 16.04)
-- macOS (Tested on >= 10.11)
+- Ubuntu (Tested on >= 22.04)
+- MacOS (Tested on >= 14)
 
 ## Usage
 
@@ -20,7 +20,3 @@ To preserve the user's HOME environment variable use
 `sudo ./install.sh --headless`
 
 This installs only headless tools/applications and omits things such as Google Chrome and VSCode.
-
-## TODO
-
-- Fix ownership of files created by the script on Ubuntu 20.* (see tmp.sh for ideas)
