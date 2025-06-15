@@ -1,4 +1,4 @@
-source $HOME/Repos/antigen/antigen.zsh
+source $HOME/Workspaces/Public/antigen/antigen.zsh
 
 antigen use oh-my-zsh
 
@@ -11,6 +11,8 @@ antigen bundle thefuck
 antigen bundle safe-paste
 antigen bundle tmux
 antigen bundle direnv
+antigen bundle macos
+antigen bundle rust
 
 antigen theme nellywhads/alien-minimal alien-minimal
 

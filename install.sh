@@ -64,8 +64,8 @@ if [ "${1-}" = "--headless" ]; then
      export UI_TYPE="headless"
 fi
 
-export REPOS_DIR=$HOME/Repos
-printf '\e[34m%s\e[0m\n' "Setting up 'Repos' dir @ '$REPOS_DIR'..." 1>&2
+export REPOS_DIR=$HOME/Workspaces/Public
+printf '\e[34m%s\e[0m\n' "Setting up 'Workspaces/Public' dir @ '$REPOS_DIR'..." 1>&2
 mkdir -p $REPOS_DIR
 
 printf '\e[34m%s\e[0m\n' "Setting script permissions..." 1>&2
