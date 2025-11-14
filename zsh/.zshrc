@@ -38,16 +38,16 @@ export AM_DOCKER_SYM=$(hostname -s) # Docker stores the container ID as hostname
 alias gw='git worktree'
 alias gwl='git worktree list'
 alias gwa='git worktree add'
+alias gwr='git worktree remove'
 alias gwac='git worktree add --checkout'
 alias gwp='git worktree prune'
 alias glogb='git log --oneline --decorate --graph --branches'
 
-# Custom git status alias
+# Custom git aliases
 alias gwd='git rev-parse --show-toplevel'
 alias gst='git worktree prune ; git worktree list | grep --color -E "$(gwd).*|$" ; git --no-pager branch ; git status --short ; git --no-pager stash list'
-
-# VSCode Insiders Alias
-alias icode='code-insiders'
+alias grbom='git fetch origin $(git_main_branch) && git rebase origin/$(git_main_branch)'
+alias grbiom='git fetch origin $(git_main_branch) && git rebase -i origin/$(git_main_branch)'
 
 # Add user packages/scripts/tools to path
 PATH=$PATH:"$HOME/.local/bin"
@@ -60,5 +60,7 @@ if [[ "$TERM_PROGRAM" == "ghostty" ]]; then
     export TERM=xterm-256color
 fi
 
-# TORC_ML
+# Torc
 export TORC_ML_AWS_PROFILE=torc-ml-dev
+export TORC_PULSE_AWS_PROFILE=ads-dev
+export TORC_DATA_ENGINE_AWS_PROFILE=simops-dev
