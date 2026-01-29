@@ -71,7 +71,7 @@ mkdir -p $REPOS_DIR
 printf '\e[34m%s\e[0m\n' "Setting script permissions..." 1>&2
 chmod +x ./*/install.sh
 
-printf '\e[34m%s\e[0m\n' "Installing universal dependancies..." 1>&2
+printf '\e[34m%s\e[0m\n' "Installing universal dependencies..." 1>&2
 if [ "$MACHINE" = "Ubuntu" ]; then
     apt-get update
     apt-get install curl git -y
@@ -83,8 +83,8 @@ elif [ "$MACHINE" = "Arch" ]; then
     pacman -S curl git --noconfirm
 fi
 
-printf '\e[34m%s\e[0m\n' "Installing Dependancy: UV ..." 1>&2
-if ! uv --version &>/dev/null; then
+printf '\e[34m%s\e[0m\n' "Installing Dependency: UV ..." 1>&2
+if [ -z "${UV_SKIP_INSTALL:-}" ] && ! uv --version &>/dev/null; then
     curl -LsSf https://astral.sh/uv/install.sh | sh
 fi
 
