@@ -14,7 +14,7 @@ fi
 
 printf '\e[34m%s\e[0m\n' "Installing Tmux..." 1>&2
 if [ "$MACHINE" = "Ubuntu" ]; then
-    apt-get install tmux -y
+    sudo apt-get install tmux -y
 elif [ "$MACHINE" = "MacOS" ]; then
     brew install tmux
 elif [ "$MACHINE" = "Arch" ]; then

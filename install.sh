@@ -73,8 +73,8 @@ chmod +x ./*/install.sh
 
 printf '\e[34m%s\e[0m\n' "Installing universal dependencies..." 1>&2
 if [ "$MACHINE" = "Ubuntu" ]; then
-    apt-get update
-    apt-get install curl git -y
+    sudo apt-get update
+    sudo apt-get install curl git -y
 elif [ "$MACHINE" = "MacOS" ]; then
     if ! command -v brew &>/dev/null; then
         if [ ! -t 0 ]; then

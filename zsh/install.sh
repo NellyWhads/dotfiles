@@ -12,7 +12,7 @@ curl -L git.io/antigen > $ANTIGEN_DIR/antigen.zsh
 
 printf '\e[34m%s\e[0m\n' "Installing ZSH..." 1>&2
 if [ "$MACHINE" = "Ubuntu" ]; then
-    apt-get install zsh -y
+    sudo apt-get install zsh -y
 elif [ "$MACHINE" = "MacOS" ]; then
     brew install zsh
 elif [ "$MACHINE" = "Arch" ]; then
