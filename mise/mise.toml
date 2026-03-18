@@ -1,0 +1,14 @@
+# See https://mise.jdx.dev/configuration.html
+
+[settings]
+# Required for [hooks] (e.g. postinstall)
+experimental = true
+
+[hooks]
+# Sync shell completions for active mise tools (version matches current env)
+postinstall = "mise exec -- mise-completions-sync"
+
+[tools]
+uv = "0.10.10"
+# GitHub backend: key is "github:owner/repo", value is version (see https://mise.jdx.dev/dev-tools/backends/github.html)
+"github:alltuner/mise-completions-sync" = "latest"

@@ -1,4 +1,16 @@
-source $HOME/Repos/antigen/antigen.zsh
+REPOS_DIR="${HOME}/workspaces/public"
+
+if ! echo "$PATH" | grep -q "/usr/local/bin" ; then
+    export PATH="${PATH}:/usr/local/bin"
+fi
+if ! echo "${PATH}" | grep -q "${HOME}/.local/bin" ; then
+    export PATH="${PATH}:${HOME}/.local/bin"
+fi
+
+# mise-completions-sync: must be before compinit (which runs at antigen apply)
+fpath=("${XDG_DATA_HOME:-${HOME}/.local/share}/mise-completions/zsh" "${fpath[@]}")
+
+source ${REPOS_DIR}/antigen/antigen.zsh
 
 antigen use oh-my-zsh
 
@@ -7,10 +19,10 @@ antigen bundle command-not-found
 antigen bundle cp
 antigen bundle git
 antigen bundle debian
-antigen bundle thefuck
 antigen bundle safe-paste
 antigen bundle tmux
-antigen bundle direnv
+antigen bundle mise
+antigen bundle uv
 
 antigen theme nellywhads/alien-minimal alien-minimal
 
@@ -26,9 +38,6 @@ antigen bundle zdharma-continuum/fast-syntax-highlighting
 antigen bundle z-shell/zsh-lsd --branch=main
 
 antigen apply
-
-# Source bash profile if it exists
-[[ -f ~/.bash_profile ]] && source ~/.bash_profile
 
 # Show hostname for in theme
 export AM_SSH_SYM=$(hostname -s)
@@ -49,18 +58,7 @@ alias gst='git worktree prune ; git worktree list | grep --color -E "$(gwd).*|$"
 alias grbom='git fetch origin $(git_main_branch) && git rebase origin/$(git_main_branch)'
 alias grbiom='git fetch origin $(git_main_branch) && git rebase -i origin/$(git_main_branch)'
 
-# Add user packages/scripts/tools to path
-PATH=$PATH:"$HOME/.local/bin"
-
-# Add fuck alias
-eval "$(thefuck --alias)"
-
 # Workaround for ghostty
 if [[ "$TERM_PROGRAM" == "ghostty" ]]; then
     export TERM=xterm-256color
 fi
-
-# Torc
-export TORC_ML_AWS_PROFILE=torc-ml-dev
-export TORC_PULSE_AWS_PROFILE=ads-dev
-export TORC_DATA_ENGINE_AWS_PROFILE=simops-dev

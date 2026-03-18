@@ -7,7 +7,7 @@ DOTFILE_REPO_ROOT='https://github.com/NellyWhadsDev/dotfiles'
 
 # Sudo check
 if [ "$USER" != "root" ]; then
-    printf '\e[31;1m%s\e[0m\n' "Warning: This script is expected to run as root" 1>&2
+    printf '\e[31;1m%s\e[0m\n' "Warning: This script is usually run as root" 1>&2
     SUDO_USER=$USER
 fi
 
@@ -64,8 +64,8 @@ if [ "${1-}" = "--headless" ]; then
      export UI_TYPE="headless"
 fi
 
-export REPOS_DIR=$HOME/Repos
-printf '\e[34m%s\e[0m\n' "Setting up 'Repos' dir @ '$REPOS_DIR'..." 1>&2
+export REPOS_DIR=$HOME/workspaces/public
+printf '\e[34m%s\e[0m\n' "Setting up public workspaces dir @ '$REPOS_DIR'..." 1>&2
 mkdir -p $REPOS_DIR
 
 printf '\e[34m%s\e[0m\n' "Setting script permissions..." 1>&2
@@ -76,26 +76,32 @@ if [ "$MACHINE" = "Ubuntu" ]; then
     apt-get update
     apt-get install curl git -y
 elif [ "$MACHINE" = "MacOS" ]; then
-    ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)" </dev/null
+    if ! command -v brew &>/dev/null; then
+        if [ ! -t 0 ]; then
+            printf '\e[31;1m%s\e[0m\n' "Homebrew must be installed from an interactive terminal (stdin is not a TTY)." 1>&2
+            printf '\e[33m%s\e[0m\n' "Run this script from Terminal.app or iTerm, not from Cursor/IDE:" 1>&2
+            printf '  %s\n' "cd \"$(pwd)\" && ./install.sh $*" 1>&2
+            exit 1
+        fi
+        /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+    fi
     brew install curl git
 elif [ "$MACHINE" = "Arch" ]; then
     pacman -Sy --noconfirm
     pacman -S curl git --noconfirm
 fi
 
-printf '\e[34m%s\e[0m\n' "Installing Dependency: UV ..." 1>&2
-if [ -z "${UV_SKIP_INSTALL:-}" ] && ! uv --version &>/dev/null; then
-    curl -LsSf https://astral.sh/uv/install.sh | sh
-fi
-
-# ZSH setup
-(cd zsh ; ./install.sh)
+# mise setup
+(cd mise ; ./install.sh)
 
 # Tmux setup
 (cd tmux ; ./install.sh)
 
-# VSCode setup
-(cd vscode ; ./install.sh)
+# ZSH setup
+(cd zsh ; ./install.sh)
+
+# Cursor setup
+(cd cursor ; ./install.sh)
 
 # User setup
 if [ ! -f $HOME/.gitconfig ]; then
