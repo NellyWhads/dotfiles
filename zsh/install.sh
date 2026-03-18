@@ -19,6 +19,15 @@ elif [ "$MACHINE" = "Arch" ]; then
     pacman -S zsh --noconfirm
 fi
 
+printf '\e[34m%s\e[0m\n' "Installing lsd..." 1>&2
+if [ "$MACHINE" = "Ubuntu" ]; then
+    sudo apt-get install lsd -y
+elif [ "$MACHINE" = "MacOS" ]; then
+    brew install lsd
+elif [ "$MACHINE" = "Arch" ]; then
+    pacman -S lsd --noconfirm
+fi
+
 printf '\e[34m%s\e[0m\n' "Creating links..." 1>&2
 ln -sfn $ZSH_DIR/.zshrc $HOME/.zshrc
 if [ "$MACHINE" = "MacOS" ]; then
