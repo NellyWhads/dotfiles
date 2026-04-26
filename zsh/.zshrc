@@ -5,6 +5,7 @@
 typeset -U path PATH    # de-dup
 path=(
     "$HOME/.local/bin"
+    "$HOME/.cargo/bin"            # cargo-installed binaries (e.g. pay-respects)
     "/opt/homebrew/bin"           # macOS Apple Silicon homebrew
     "/usr/local/bin"
     $path
