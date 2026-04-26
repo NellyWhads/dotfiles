@@ -10,19 +10,24 @@ My dotfiles for a clean OS rampup.
 ## Installation
 
 1. Clone this repo (e.g. into `~/workspaces/public/dotfiles` or wherever you keep repos).
-2. From the repo root, run:
+2. From the repo root, run the OS-appropriate command below.
+3. **macOS:**
    ```bash
-   sudo ./install.sh
+   ./install.sh
    ```
-3. **macOS:** If Homebrew isn’t installed yet, run the script from **Terminal.app** or **iTerm** (not from Cursor or another IDE), so it can prompt for your password.
+   Run from **Terminal.app** or **iTerm** (not from Cursor or another IDE) so password prompts work. Do **not** use `sudo` — Homebrew refuses to run as root. The script prompts for your password inline where it actually needs root (`/etc/shells`, `chsh`).
 4. **Ubuntu:** Preserve your home directory so tools install under your user:
    ```bash
    sudo -E ./install.sh
    ```
+5. **Arch:**
+   ```bash
+   sudo ./install.sh
+   ```
 
 ### Headless mode
 
-`sudo ./install.sh --headless` — skips GUI apps (e.g. Chrome, VSCode).
+`./install.sh --headless` (or `sudo -E ./install.sh --headless` on Ubuntu) — skips GUI apps (e.g. Chrome, VSCode).
 
 ### Shell completions (mise tools)
 
@@ -42,7 +47,8 @@ exec zsh
 
 To skip installing mise tools and linking config (e.g. for a minimal install or on CI), set the `SKIP_MISE_TOOL_INSTALL` environment variable:
 ```bash
-SKIP_MISE_TOOL_INSTALL=1 sudo ./install.sh
+SKIP_MISE_TOOL_INSTALL=1 ./install.sh         # macOS
+SKIP_MISE_TOOL_INSTALL=1 sudo -E ./install.sh # Ubuntu
 ```
 
 ### zsh setup

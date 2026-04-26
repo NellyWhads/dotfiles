@@ -83,12 +83,13 @@ zsh -c 'zcompile "${HOME}/.zshrc" "${HOME}/.zsh_plugins.zsh" 2>/dev/null' || tru
 if [ "$MACHINE" = "MacOS" ]; then
     ZSH_PATH="$(command -v zsh)"
     if ! grep -qx "$ZSH_PATH" /etc/shells 2>/dev/null; then
+        printf '\n\e[34m%s\e[0m\n' "Adding $ZSH_PATH to /etc/shells..." 1>&2
+        printf '\e[33;1m%s\e[0m\n' ">>> sudo will prompt for your password — type it and press Enter <<<" 1>&2
         echo "$ZSH_PATH" | sudo tee -a /etc/shells > /dev/null
     fi
 fi
 
 # ---------- Set zsh as default shell ----------
-printf '\e[34m%s\e[0m\n' "Updating shell..." 1>&2
 if [ -n "${SUDO_USER:-}" ]; then
     TARGET_USER="$SUDO_USER"
 else
@@ -106,8 +107,15 @@ else
 fi
 
 if [ "$CURRENT_SHELL" != "$ZSH_PATH" ]; then
-    echo "Setting default shell for $TARGET_USER to $ZSH_PATH" 1>&2
-    if ! chsh -s "$ZSH_PATH" "$TARGET_USER" 2>/dev/null; then
-        printf '\e[31m%s\e[0m\n' "Warning: Could not change shell automatically for $TARGET_USER. Please run 'chsh -s $ZSH_PATH $TARGET_USER' manually." 1>&2
+    printf '\n\e[34m%s\e[0m\n' "Setting default login shell for $TARGET_USER to $ZSH_PATH..." 1>&2
+    if [ "$MACHINE" = "MacOS" ]; then
+        # macOS chsh prompts for the password via PAM with NO label of its own.
+        # If you don't warn the user, it just looks like the script hung.
+        printf '\e[33;1m%s\e[0m\n' ">>> chsh will prompt SILENTLY for your password — type it and press Enter <<<" 1>&2
+    fi
+    # Note: do NOT redirect chsh's stderr — that's where the password prompt goes.
+    if ! chsh -s "$ZSH_PATH" "$TARGET_USER"; then
+        printf '\e[31m%s\e[0m\n' "Warning: Could not change shell automatically for $TARGET_USER." 1>&2
+        printf '\e[31m%s\e[0m\n' "         Run manually: chsh -s $ZSH_PATH $TARGET_USER" 1>&2
     fi
 fi

@@ -5,9 +5,8 @@ set -e
 
 DOTFILE_REPO_ROOT='https://github.com/NellyWhadsDev/dotfiles'
 
-# Sudo check
-if [ "$USER" != "root" ]; then
-    printf '\e[31;1m%s\e[0m\n' "Warning: This script is usually run as root" 1>&2
+# SUDO_USER fallback (set by `sudo` itself; falls back to current user)
+if [ -z "${SUDO_USER:-}" ]; then
     SUDO_USER=$USER
 fi
 
@@ -55,6 +54,19 @@ if [ "$MACHINE" = "Ubuntu" ] || [ "$MACHINE" = "MacOS" ] || [ "$MACHINE" = "Arch
 else
     printf '\e[31;1m%s\e[0m\n' "Unsupported environment: '$MACHINE'" 1>&2
     exit 1
+fi
+
+# OS-specific sudo policy
+if [ "$MACHINE" = "MacOS" ] && [ "$(id -u)" -eq 0 ]; then
+    printf '\e[31;1m%s\e[0m\n' "Error: Don't run this script under sudo on macOS." 1>&2
+    printf '\e[33m%s\e[0m\n' "  Homebrew refuses to run as root. Re-run as your user:" 1>&2
+    printf '\n  %s\n\n' "    ./install.sh${1:+ $*}" 1>&2
+    printf '\e[33m%s\e[0m\n' "  The script will prompt for your password where it actually" 1>&2
+    printf '\e[33m%s\e[0m\n' "  needs root (writing /etc/shells, running chsh)." 1>&2
+    exit 1
+fi
+if [ "$USER" != "root" ] && { [ "$MACHINE" = "Ubuntu" ] || [ "$MACHINE" = "Arch" ]; }; then
+    printf '\e[33m%s\e[0m\n' "Note: On $MACHINE this usually needs sudo (e.g. 'sudo -E ./install.sh' on Ubuntu)." 1>&2
 fi
 
 # Get UI type from CLI args
