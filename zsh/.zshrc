@@ -133,6 +133,9 @@ for _omz_git_lib in \
 done
 unset _omz_git_lib
 
+# Git alias → _git completion (glog, gco, …); see git-alias-completion.zsh.
+source "${ZSH_DOTFILES}/git-alias-completion.zsh"
+
 # ---------- fzf key bindings + completions (cross-platform) ----------
 # Use fd as the file source if present (faster, respects .gitignore by
 # default). Use bat for previews if present.
