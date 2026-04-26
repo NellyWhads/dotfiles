@@ -1,8 +1,8 @@
 # Shortcuts cheat sheet
 
 Everything new (and many old favorites) wired up by this dotfiles setup.
-Open this file with `bat ~/workspaces/public/dotfiles/zsh/SHORTCUTS.md` for
-a syntax-highlighted view, or just `cat`.
+Open this file with `bat …/SHORTCUTS.md` for syntax highlighting, or
+`glow …/SHORTCUTS.md` for a rendered Markdown view in the terminal.
 
 ---
 
@@ -111,7 +111,7 @@ tldr --update     # refresh page cache (auto-runs every 30 days)
 
 ---
 
-## Files / search shortcuts (fd, ripgrep, bat)
+## Files / search shortcuts (fd, ripgrep, bat, glow)
 
 | Alias | Expands to | Use |
 |---|---|---|
@@ -123,7 +123,12 @@ tldr --update     # refresh page cache (auto-runs every 30 days)
 | `ffa pattern` | `fd -HI pattern` | Include hidden AND `.gitignored` |
 | `rg "pat"` | (rg) | Fast grep alternative |
 | `bat file.py` | (bat) | `cat` with syntax highlighting + line numbers |
+| `glow file.md` | (glow) | Render Markdown in the terminal (pager, styles) |
 | `tldr <cmd>` | (tealdeer) | Cheat sheet |
+
+### Command hints (optional nudges)
+
+If `DOTFILES_COMMAND_HINTS` is not `0`, the first `cat` of each day (without a `.md` argument) can print a one-line hint to prefer `bat` when it is installed; each `cat` of a `*.md` file can hint at `glow`. Rules live in `zsh/command-hints.conf`; state is under `${XDG_CACHE_HOME:-~/.cache}/dotfiles/command-hints.state`.
 
 For predicates fd doesn't have (`-newer`, `-mtime`, `-prune`, complex `-exec`), `find` is still at `/usr/bin/find` — untouched.
 

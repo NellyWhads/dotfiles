@@ -289,6 +289,11 @@ bindkey '^XY' _zsh_history_yank_at_cursor   # Ctrl-X Y (no second Ctrl)
 # ---------- aliases / functions ----------
 [[ -r "${ZSH_DOTFILES}/aliases.zsh" ]] && source "${ZSH_DOTFILES}/aliases.zsh"
 
+# ---------- command hints (daily / Markdown nudges; see command-hints.conf) ----------
+if [[ "${DOTFILES_COMMAND_HINTS:-1}" != "0" ]] && [[ -r "${ZSH_DOTFILES}/command-hints.zsh" ]]; then
+    source "${ZSH_DOTFILES}/command-hints.zsh"
+fi
+
 # ---------- ghostty workaround ----------
 if [[ "$TERM_PROGRAM" == "ghostty" ]]; then
     export TERM=xterm-256color

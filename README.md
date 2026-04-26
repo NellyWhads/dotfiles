@@ -62,6 +62,12 @@ Heavy plugins (`zsh-autosuggestions`, `fast-syntax-highlighting`,
 `alias-tips`, `almostontop`) are deferred via antidote's `kind:defer`
 annotation, so the prompt draws first and they kick in milliseconds later.
 
+`zsh/install.sh` also installs **glow** (Markdown in the terminal) and symlinks
+`zsh/glow.yml` into `~/.config/glow/`. Optional **command hints** (once-a-day
+`cat`→`bat` nudge, per-invocation `cat`+`.md`→`glow`) load from
+`zsh/command-hints.zsh`; set `DOTFILES_COMMAND_HINTS=0` to disable, or edit
+`zsh/command-hints.conf`.
+
 To benchmark startup:
 
 ```bash

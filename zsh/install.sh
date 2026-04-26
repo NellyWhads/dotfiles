@@ -95,6 +95,20 @@ elif [ "$MACHINE" = "Arch" ]; then
     pacman -S --noconfirm lsd
 fi
 
+# ---------- Install glow (terminal Markdown reader) ----------
+printf '\e[34m%s\e[0m\n' "Installing glow..." 1>&2
+if [ "$MACHINE" = "MacOS" ]; then
+    brew install glow
+elif [ "$MACHINE" = "Ubuntu" ]; then
+    if apt-cache show glow >/dev/null 2>&1; then
+        sudo apt-get install -y glow
+    else
+        printf '\e[33m%s\e[0m\n' "  No apt package glow — install from https://github.com/charmbracelet/glow/releases" 1>&2
+    fi
+elif [ "$MACHINE" = "Arch" ]; then
+    pacman -S --noconfirm glow
+fi
+
 # ---------- Install starship (the new prompt) ----------
 printf '\e[34m%s\e[0m\n' "Installing starship..." 1>&2
 if [ "$MACHINE" = "Ubuntu" ]; then
@@ -195,6 +209,16 @@ if command -v atuin >/dev/null 2>&1; then
         printf '\e[33m%s\e[0m\n' "  Existing atuin config backed up to config.toml.pre-dotfiles" 1>&2
     fi
     ln -sfn "$ZSH_DIR/atuin-config.toml" "$HOME/.config/atuin/config.toml"
+fi
+
+# ---------- Symlink glow config ----------
+if command -v glow >/dev/null 2>&1; then
+    mkdir -p "$HOME/.config/glow"
+    if [ -f "$HOME/.config/glow/glow.yml" ] && [ ! -L "$HOME/.config/glow/glow.yml" ]; then
+        mv "$HOME/.config/glow/glow.yml" "$HOME/.config/glow/glow.yml.pre-dotfiles"
+        printf '\e[33m%s\e[0m\n' "  Existing glow.yml backed up to glow.yml.pre-dotfiles" 1>&2
+    fi
+    ln -sfn "$ZSH_DIR/glow.yml" "$HOME/.config/glow/glow.yml"
 fi
 
 # ---------- Clone fzf-git.sh (Ctrl-G key bindings for fuzzy git) ----------
