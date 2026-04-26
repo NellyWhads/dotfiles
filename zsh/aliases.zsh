@@ -40,3 +40,25 @@ fkill() {
         echo "$pids" | xargs kill -"${1:-15}"
     fi
 }
+
+# --- find-style shortcuts (powered by fd) ---
+# These are FAST SHORTCUTS for the common cases, NOT a replacement for
+# find. /usr/bin/find still does everything it always did — reach for
+# it when you need predicates fd doesn't have (-newer, -mtime, -prune,
+# -mount, complex -exec ... \;, etc.).
+#
+# Examples:
+#   ff foo               # find files matching "foo" (substring or regex)
+#   ffd build            # find directories named build
+#   ffe py               # find *.py files (no dot, no glob needed)
+#   ffi readme           # case-insensitive — matches README, Readme, etc.
+#   ffh dotfile          # include hidden/dotfiles in the search
+#   ffa pattern          # show ALL: hidden + .gitignored
+if command -v fd >/dev/null 2>&1; then
+    alias ff='fd'              # default: respects .gitignore, skips hidden
+    alias ffd='fd -t d'        # directories only
+    alias ffe='fd -e'          # by extension: ffe py == fd -e py
+    alias ffi='fd -i'          # case-insensitive
+    alias ffh='fd -H'          # include hidden / dotfiles
+    alias ffa='fd -HI'         # include hidden AND .gitignored
+fi
