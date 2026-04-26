@@ -101,6 +101,23 @@ if [[ -r "$zsh_plugins_txt" ]]; then
     compinit -C -d "$ZSH_COMPDUMP"
 fi
 
+# ---------- OMZ git library helpers ----------
+# OMZ's plugins/git provides the aliases (gpsup, gst, etc.) but their
+# implementation references functions like `git_current_branch` and
+# `git_main_branch` which live in OMZ's lib/git.zsh — not in the plugin
+# subdir. Antidote's `path:plugins/git` only pulls the plugin dir, so
+# we source the lib explicitly from antidote's cache.
+# Our personal aliases.zsh also relies on `git_main_branch` for `grbom`.
+for _omz_git_lib in \
+    "$HOME/Library/Caches/antidote/github.com/ohmyzsh/ohmyzsh/lib/git.zsh" \
+    "$HOME/.cache/antidote/github.com/ohmyzsh/ohmyzsh/lib/git.zsh"; do
+    if [[ -r "$_omz_git_lib" ]]; then
+        source "$_omz_git_lib"
+        break
+    fi
+done
+unset _omz_git_lib
+
 # ---------- fzf key bindings + completions (cross-platform) ----------
 # Use fd as the file source if present (faster, respects .gitignore by
 # default). Use bat for previews if present.
