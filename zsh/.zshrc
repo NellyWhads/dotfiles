@@ -228,6 +228,26 @@ if command -v atuin >/dev/null 2>&1; then
     bindkey '^X^R'      atuin-search    # Ctrl-X Ctrl-R (universal)
     bindkey '^[[82;5u'  atuin-search    # Ctrl-Shift-R, iTerm2-style CSI u
     bindkey '^[[114;6u' atuin-search    # Ctrl-Shift-R, kitty-style CSI u
+
+    # ---- Append-from-atuin (chain-mode) ----
+    # Default atuin-search REPLACES the current buffer. This sibling
+    # widget INSERTS the selected command at the cursor instead, so you
+    # can chain multiple history hits:
+    #   1. Ctrl-X Ctrl-Y, find cmd1, Enter           → buffer is "cmd1"
+    #   2. type " && "                                → buffer is "cmd1 && "
+    #   3. Ctrl-X Ctrl-Y, find cmd2, Enter           → buffer is "cmd1 && cmd2"
+    #   4. (repeat)                                   → "cmd1 && cmd2 && cmd3"
+    #   5. Enter to run, or Ctrl-X Ctrl-E to massage further in $EDITOR.
+    _atuin_yank_at_cursor() {
+        local output
+        output=$(__atuin_search_cmd "$@")
+        zle reset-prompt
+        if [[ -n "$output" ]]; then
+            LBUFFER+="$output"
+        fi
+    }
+    zle -N _atuin_yank_at_cursor
+    bindkey '^X^Y' _atuin_yank_at_cursor   # Ctrl-X Ctrl-Y ("eXtended Yank")
 fi
 
 # ---------- aliases / functions ----------
