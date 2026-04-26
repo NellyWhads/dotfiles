@@ -250,6 +250,34 @@ if command -v atuin >/dev/null 2>&1; then
     bindkey '^X^Y' _atuin_yank_at_cursor   # Ctrl-X Ctrl-Y ("eXtended Yank")
 fi
 
+# ---------- fzf-based history yank-at-cursor (HSM-equivalent data) ----------
+# Wrapping HSM directly is fragile (it calls .accept-line internally, which
+# would execute the line before our wrapper can capture). Instead, this
+# widget reads zsh's history file (the same source HSM uses) and pipes
+# through fzf for picking, then inserts at cursor.
+#
+# Use this when you want chain-mode search backed by the plain zsh history
+# rather than atuin's SQLite db (e.g. for compatibility with non-atuin
+# machines, or when you specifically want HSM's data set).
+_zsh_history_yank_at_cursor() {
+    if ! command -v fzf >/dev/null 2>&1; then
+        zle -M "fzf not found — Ctrl-X Y needs fzf installed."
+        return 1
+    fi
+    local picked
+    # `fc -rln 1` = list history newest-first, no line numbers, starting at 1.
+    picked=$(fc -rln 1 | awk '!seen[$0]++' | fzf --tiebreak=index --no-sort \
+        --prompt='zsh-history > ' \
+        --preview-window=hidden \
+        --height=40%)
+    if [[ -n "$picked" ]]; then
+        LBUFFER+="$picked"
+    fi
+    zle reset-prompt
+}
+zle -N _zsh_history_yank_at_cursor
+bindkey '^XY' _zsh_history_yank_at_cursor   # Ctrl-X Y (no second Ctrl)
+
 # ---------- aliases / functions ----------
 [[ -r "${ZSH_DOTFILES}/aliases.zsh" ]] && source "${ZSH_DOTFILES}/aliases.zsh"
 
