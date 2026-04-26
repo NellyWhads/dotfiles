@@ -82,6 +82,10 @@ To benchmark startup:
 clones into the sandbox on first run if it isn't already on the system.
 Cleanup: `rm -rf ~/.cache/zsh-bench-proposed`.
 
+### Migrating from legacy shell stack (Ubuntu 22.04 / 24.04)
+
+If another machine still has **Antigen**, **nvm**, **direnv**, **thefuck**, **pyenv** shims in `~/.zshrc.local`, etc., run **`scripts/nuclear-clean-legacy-shell.sh`** once **before** switching to this branch’s `zsh/install.sh`. It defaults to **dry-run**; use **`--execute`** to apply. It purges common apt packages (`direnv`, `thefuck`, `pyenv` when installed), removes **`~/.nvm`**, Antigen trees under **`~/Repos/antigen`** (and a few fallbacks), **`~/.antigen`**, strips matching lines/blocks from shell RC files (skips **`~/.zshrc`** if it is already a symlink into a **`dotfiles`** checkout), removes **`~/.zcompdump*`**, and can uninstall **`thefuck`** via **`uv`** / **`pipx`**. Optional nuclear flags: **`--remove-pyenv-root`**, **`--remove-fnm-root`**, **`--remove-volta-root`**, **`--remove-conda-root`**, **`--reset-atuin`**, **`--no-apt`**. Rewritten RC files are copied under **`~/.dotfiles-nuclear-cleanup-backup-<timestamp>/`** first.
+
 ### Machine-local config
 
 Anything machine-specific (work secrets, SSO profiles, host-specific aliases)
