@@ -23,6 +23,8 @@ bat      = "latest"   # `cat` w/ syntax highlighting + line numbers (also powers
 ripgrep  = "latest"   # 10x faster grep, sane defaults
 fd       = "latest"   # simpler/faster `find`; backs FZF_DEFAULT_COMMAND
 delta    = "latest"   # side-by-side syntax-highlighted git diff viewer
-# tealdeer isn't in mise's default registry — pull via the aqua backend.
-"aqua:tealdeer-rs/tealdeer" = "latest"   # `tldr` simplified man pages, Rust-fast
+# tealdeer (`tldr`) is installed by zsh/install.sh — recent tealdeer
+# releases stopped publishing binaries to GitHub Releases, so neither
+# mise's default registry nor the aqua backend can fetch them. brew
+# (macOS) and cargo (Linux fallback) handle it directly.
 atuin    = "latest"   # SQLite-backed shell history (local-only by default)

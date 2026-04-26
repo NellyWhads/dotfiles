@@ -82,7 +82,7 @@ elif [ "$MACHINE" = "Arch" ]; then
 fi
 
 # ---------- Install pay-respects (typo corrector — Rust thefuck) ----------
-# Not yet in mise's standard registry, so install via brew/cargo/AUR.
+# Not in mise's standard registry, so install via brew/cargo/AUR.
 printf '\e[34m%s\e[0m\n' "Installing pay-respects..." 1>&2
 if [ "$MACHINE" = "MacOS" ]; then
     brew install pay-respects
@@ -98,6 +98,25 @@ elif [ "$MACHINE" = "Arch" ]; then
     elif command -v paru >/dev/null 2>&1; then
         paru -S --noconfirm pay-respects
     fi
+fi
+
+# ---------- Install tealdeer (Rust `tldr`) ----------
+# Recent releases don't publish binaries to GitHub Releases, so mise's
+# aqua backend can't fetch it. brew on macOS, apt on newer Ubuntu,
+# pacman on Arch, cargo as last resort.
+printf '\e[34m%s\e[0m\n' "Installing tealdeer..." 1>&2
+if [ "$MACHINE" = "MacOS" ]; then
+    brew install tealdeer
+elif [ "$MACHINE" = "Ubuntu" ]; then
+    if apt-cache show tealdeer >/dev/null 2>&1; then
+        sudo apt-get install -y tealdeer
+    elif command -v cargo >/dev/null 2>&1; then
+        cargo install tealdeer
+    else
+        printf '\e[33m%s\e[0m\n' "  Skipping tealdeer (no apt pkg, no cargo)." 1>&2
+    fi
+elif [ "$MACHINE" = "Arch" ]; then
+    pacman -S --noconfirm tealdeer
 fi
 
 # ---------- Clone fzf-git.sh (Ctrl-G key bindings for fuzzy git) ----------
