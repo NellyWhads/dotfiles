@@ -163,6 +163,16 @@ unset _fzf_comp
 [[ -r "${HOME}/.local/share/fzf-git.sh/fzf-git.sh" ]] && \
     source "${HOME}/.local/share/fzf-git.sh/fzf-git.sh"
 
+# ---------- Edit current command in $EDITOR (Ctrl-X Ctrl-E) ----------
+# Built-in zsh widget — not bound by default. Pressing Ctrl-X Ctrl-E
+# pops the current command line into $EDITOR. Save and quit, and zsh
+# runs the (possibly multi-line) edited version. Perfect for editing
+# long `&&`/`||`/`|` chains, multi-line scripts, or anything that
+# doesn't fit on one screen line.
+autoload -Uz edit-command-line
+zle -N edit-command-line
+bindkey '^X^E' edit-command-line
+
 # ---------- Word-boundary tweaks ----------
 # zsh's default WORDCHARS includes /, ., -, _, etc. — so Alt-Backspace
 # deletes the whole path back to the previous space, not one path
