@@ -204,8 +204,17 @@ fi
 if command -v atuin >/dev/null 2>&1; then
     eval "$(atuin init zsh --disable-up-arrow --disable-ctrl-r)"
     # `_atuin_search` is defined by `atuin init` even with --disable-ctrl-r;
-    # we just re-bind it to a key that doesn't fight HSM.
-    bindkey '^[r' _atuin_search   # Alt-R
+    # re-bind it to keys that don't fight HSM. Multiple bindings hit different
+    # terminals' encodings:
+    #   ^X^R      universal chord — works in every terminal, every mode
+    #   CSI u    Ctrl-Shift-R when the terminal uses kitty keyboard protocol
+    #            (ghostty, kitty, wezterm by default; iTerm2 needs the
+    #             "Report modifiers using CSI u" setting enabled).
+    # Note: legacy terminal mode can't distinguish Ctrl-Shift-R from Ctrl-R,
+    # which is why we don't try to bind a literal `^R` for Shift here.
+    bindkey '^X^R'      _atuin_search    # Ctrl-X Ctrl-R (universal)
+    bindkey '^[[82;5u'  _atuin_search    # Ctrl-Shift-R, iTerm2-style CSI u
+    bindkey '^[[114;6u' _atuin_search    # Ctrl-Shift-R, kitty-style CSI u
 fi
 
 # ---------- aliases / functions ----------
