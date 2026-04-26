@@ -139,6 +139,21 @@ unset _fzf_comp
 [[ -r "${HOME}/.local/share/fzf-git.sh/fzf-git.sh" ]] && \
     source "${HOME}/.local/share/fzf-git.sh/fzf-git.sh"
 
+# ---------- Word-boundary tweaks ----------
+# zsh's default WORDCHARS includes /, ., -, _, etc. — so Alt-Backspace
+# deletes the whole path back to the previous space, not one path
+# component. `select-word-style bash` restores the alnum-only word
+# behavior oh-my-zsh used to give us via WORDCHARS=''.
+autoload -Uz select-word-style
+select-word-style bash
+
+# Ctrl-Backspace and Alt-Backspace both delete the previous word.
+# Most terminals send ^H for Ctrl-Backspace; ^[^? and \e\b are the two
+# common Alt-Backspace encodings across terminals/keymaps.
+bindkey '^H'   backward-kill-word    # Ctrl-Backspace
+bindkey '^[^?' backward-kill-word    # Alt-Backspace (most terminals)
+bindkey '\e\b' backward-kill-word    # Alt-Backspace (alternate encoding)
+
 # ---------- zoxide: smarter `cd` with frecency. `z foo` jumps to the
 # best match by usage; `zi` opens an fzf picker. ----------
 if command -v zoxide >/dev/null 2>&1; then
