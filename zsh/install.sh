@@ -100,10 +100,20 @@ printf '\e[34m%s\e[0m\n' "Installing glow..." 1>&2
 if [ "$MACHINE" = "MacOS" ]; then
     brew install glow
 elif [ "$MACHINE" = "Ubuntu" ]; then
-    if apt-cache show glow >/dev/null 2>&1; then
+    # glow isn't in Ubuntu's default repos; use Charm's apt repo so updates flow
+    # through the normal apt upgrade path.
+    if ! command -v glow >/dev/null 2>&1; then
+        if [ ! -f /etc/apt/keyrings/charm.gpg ]; then
+            sudo mkdir -p /etc/apt/keyrings
+            curl -fsSL https://repo.charm.sh/apt/gpg.key \
+                | sudo gpg --dearmor -o /etc/apt/keyrings/charm.gpg
+        fi
+        if [ ! -f /etc/apt/sources.list.d/charm.list ]; then
+            echo "deb [signed-by=/etc/apt/keyrings/charm.gpg] https://repo.charm.sh/apt/ * *" \
+                | sudo tee /etc/apt/sources.list.d/charm.list >/dev/null
+            sudo apt-get update
+        fi
         sudo apt-get install -y glow
-    else
-        printf '\e[33m%s\e[0m\n' "  No apt package glow — install from https://github.com/charmbracelet/glow/releases" 1>&2
     fi
 elif [ "$MACHINE" = "Arch" ]; then
     pacman -S --noconfirm glow
