@@ -123,5 +123,12 @@ if [ ! -f $HOME/.gitconfig ]; then
     git config --global user.email "nellywhads@gmail.com"
 fi
 
+# Sensible global git defaults — idempotent, safe to apply on every run.
+# delta-specific settings are applied by zsh/install.sh.
+printf '\e[34m%s\e[0m\n' "Applying global git defaults..." 1>&2
+git config --global push.autoSetupRemote true   # no more `git push --set-upstream` boilerplate
+git config --global pull.rebase true            # avoid accidental merge commits from `git pull`
+git config --global rerere.enabled true         # remember conflict resolutions across rebases
+
 printf '\n\e[34;1m%s\e[0m\n\n' "Done setting up OS tools" 1>&2
 exit 0
