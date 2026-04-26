@@ -119,13 +119,17 @@ unset _fzf_comp
 # ---------- aliases / functions ----------
 [[ -r "${ZSH_DOTFILES}/aliases.zsh" ]] && source "${ZSH_DOTFILES}/aliases.zsh"
 
-# ---------- alien-minimal theme env ----------
-export AM_SSH_SYM=$(hostname -s)
-export AM_DOCKER_SYM=$(hostname -s)
-
 # ---------- ghostty workaround ----------
 if [[ "$TERM_PROGRAM" == "ghostty" ]]; then
     export TERM=xterm-256color
+fi
+
+# ---------- Starship prompt ----------
+# Must come AFTER plugins so it wins the PROMPT setting. Starship's container
+# module auto-detects when you're inside a Docker/Podman container and renders
+# the indicator (configured in zsh/starship.toml symlinked to ~/.config/).
+if command -v starship >/dev/null 2>&1; then
+    eval "$(starship init zsh)"
 fi
 
 # ---------- machine-local overrides (NOT tracked) ----------

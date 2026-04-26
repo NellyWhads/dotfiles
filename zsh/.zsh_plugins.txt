@@ -3,7 +3,10 @@
 # Plugin order is intentional — see comments below.
 
 # --- Theme ---
-nellywhads/alien-minimal
+# Prompt is now handled by Starship (see end of .zshrc). Starship is a
+# Rust binary that's much faster than alien-minimal and has a built-in
+# `container` module that detects Docker/Podman natively. Config lives
+# in zsh/starship.toml, symlinked to ~/.config/starship.toml.
 
 # --- Oh-my-zsh plugins (antidote pulls only the named subdir, not the
 # whole OMZ framework). All are tiny and replace what used to live in
@@ -46,3 +49,4 @@ Valiev/almostontop                          kind:defer
 # unixorn/autoupdate-antigen.zshplugin     # antigen-only
 # lukechilds/zsh-nvm                       # node now managed by mise
 # ohmyzsh/ohmyzsh path:plugins/mise        # replaced by `mise activate zsh`
+# nellywhads/alien-minimal                 # replaced by Starship (faster, Rust binary)

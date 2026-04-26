@@ -66,9 +66,26 @@ elif [ "$MACHINE" = "Arch" ]; then
     pacman -S --noconfirm lsd
 fi
 
+# ---------- Install starship (the new prompt) ----------
+printf '\e[34m%s\e[0m\n' "Installing starship..." 1>&2
+if [ "$MACHINE" = "Ubuntu" ]; then
+    # apt has starship on 24.04+; otherwise official installer.
+    if apt-cache show starship >/dev/null 2>&1; then
+        sudo apt-get install -y starship
+    else
+        curl -sS https://starship.rs/install.sh | sh -s -- --yes
+    fi
+elif [ "$MACHINE" = "MacOS" ]; then
+    brew install starship
+elif [ "$MACHINE" = "Arch" ]; then
+    pacman -S --noconfirm starship
+fi
+
 # ---------- Link configs ----------
 printf '\e[34m%s\e[0m\n' "Linking configs..." 1>&2
 ln -sfn "$ZSH_DIR/.zshrc" "$HOME/.zshrc"
+mkdir -p "$HOME/.config"
+ln -sfn "$ZSH_DIR/starship.toml" "$HOME/.config/starship.toml"
 # .zsh_plugins.txt and aliases.zsh are sourced via $ZSH_DOTFILES discovery in
 # .zshrc, so they don't need separate symlinks.
 

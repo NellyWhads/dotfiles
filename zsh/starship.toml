@@ -1,0 +1,116 @@
+# Starship prompt config — see https://starship.rs/config/
+#
+# Symlinked from this file to ~/.config/starship.toml by zsh/install.sh.
+#
+# Design priorities:
+#   1. Make Docker / Podman containers OBVIOUS — the `container` module
+#      auto-detects /.dockerenv (and Podman, systemd-nspawn, LXC, ...) and
+#      shows a red indicator with the container name. This replaces the
+#      AM_DOCKER_SYM hack we used with alien-minimal.
+#   2. Stay fast — Starship is already Rust-fast, so we don't need
+#      heavy disable= rules.
+#   3. Render even with no Nerd Font installed — symbols are plain Unicode.
+
+# Two-line prompt: status info on top, fresh prompt char on bottom.
+format = """
+$username\
+$hostname\
+$container\
+$directory\
+$git_branch\
+$git_state\
+$git_status\
+$python\
+$nodejs\
+$rust\
+$golang\
+$package\
+$cmd_duration\
+$line_break\
+$character"""
+
+# ---------- The big one: container indicator ----------
+[container]
+# By default Starship only shows this module inside a container. Perfect.
+# Format gives us " [docker | container_name]" in red.
+format = "[$symbol \\[$name\\]]($style) "
+symbol = "⬢"
+style = "bold red"
+
+# ---------- Hostname ----------
+# Show always (matches what AM_SSH_SYM did with alien-minimal). When inside
+# a container, hostname is the container ID — together with $container
+# above, you'll see both: the container indicator AND the container ID.
+[hostname]
+ssh_only = false
+format = "[@$hostname]($style) "
+style = "bold yellow"
+trim_at = "."
+
+# ---------- Username ----------
+# Only render when SSH'd or running as root — same default behavior as
+# alien-minimal had via AM_SSH_SYM.
+[username]
+show_always = false
+format = "[$user]($style)"
+style_user = "bold green"
+style_root = "bold red"
+
+# ---------- Directory ----------
+[directory]
+truncation_length = 4
+truncate_to_repo = true
+style = "bold cyan"
+
+# ---------- Git ----------
+[git_branch]
+symbol = " "
+format = "on [$symbol$branch]($style) "
+style = "bold purple"
+
+[git_status]
+format = '([\[$all_status$ahead_behind\]]($style) )'
+style = "yellow"
+ahead = "↑${count}"
+behind = "↓${count}"
+diverged = "↕${ahead_count}↓${behind_count}"
+modified = "!${count}"
+staged = "+${count}"
+deleted = "✘${count}"
+untracked = "?${count}"
+stashed = "≡"
+
+# ---------- Languages (uv lives in $virtualenv) ----------
+[python]
+symbol = " "
+format = '[$symbol(${version} )(\($virtualenv\) )]($style)'
+style = "yellow"
+
+[nodejs]
+symbol = " "
+format = "[$symbol($version )]($style)"
+style = "bold green"
+detect_files = ["package.json", ".nvmrc", ".node-version"]
+
+[rust]
+symbol = " "
+format = "[$symbol($version )]($style)"
+
+[golang]
+symbol = " "
+format = "[$symbol($version )]($style)"
+
+# ---------- Misc ----------
+[package]
+disabled = true   # noisy, you usually don't need it
+
+[cmd_duration]
+min_time = 2_000   # only show for commands taking >2s
+format = "took [$duration]($style) "
+style = "bold yellow"
+
+# ---------- Prompt character ----------
+[character]
+success_symbol = "[❯](bold green)"
+error_symbol = "[❯](bold red)"
+vimcmd_symbol = "[❮](bold green)"
