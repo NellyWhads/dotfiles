@@ -168,6 +168,18 @@ elif [ "$MACHINE" = "Arch" ]; then
     pacman -S --noconfirm tealdeer
 fi
 
+# ---------- Configure tealdeer + prime its cache ----------
+# tealdeer ships uninitialized — first `tldr foo` errors with "Page cache
+# not found". Symlink in our config (auto_update enabled) and do the
+# initial fetch here so it Just Works after install.
+if command -v tldr >/dev/null 2>&1; then
+    mkdir -p "$HOME/.config/tealdeer"
+    ln -sfn "$ZSH_DIR/tealdeer-config.toml" "$HOME/.config/tealdeer/config.toml"
+    printf '\e[34m%s\e[0m\n' "Priming tealdeer page cache..." 1>&2
+    tldr --update >/dev/null 2>&1 || \
+        printf '\e[33m%s\e[0m\n' "  tldr cache update failed (run 'tldr --update' manually later)" 1>&2
+fi
+
 # ---------- Clone fzf-git.sh (Ctrl-G key bindings for fuzzy git) ----------
 # Single shell script, not a binary — clone to a stable path and source it
 # from .zshrc.
