@@ -44,9 +44,3 @@ zdharma-continuum/history-search-multi-word kind:defer
 # --- Niceties (deferred) ---
 djui/alias-tips                             kind:defer
 Valiev/almostontop                          kind:defer
-
-# --- DROPPED on purpose, see PROPOSAL.md §1 and §3 ---
-# unixorn/autoupdate-antigen.zshplugin     # antigen-only
-# lukechilds/zsh-nvm                       # node now managed by mise
-# ohmyzsh/ohmyzsh path:plugins/mise        # replaced by `mise activate zsh`
-# nellywhads/alien-minimal                 # replaced by Starship (faster, Rust binary)

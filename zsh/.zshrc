@@ -36,7 +36,11 @@ ZSH_DOTFILES="${ZSH_DOTFILES:-${${(%):-%x}:A:h}}"
 # via mise-completions-sync. mise's OWN completion (_mise) needs to be
 # generated separately — do that here, lazily, if it's missing or stale.
 _MISE_COMP_DIR="${XDG_DATA_HOME:-${HOME}/.local/share}/mise-completions/zsh"
-fpath=("$_MISE_COMP_DIR" $fpath)
+# ~/.zfunc: drop-in dir for local/tool-generated completions (_mytool files).
+# Tools should write their _completion file here and optionally `rm ~/.zcompdump`
+# to invalidate the cache — they must NOT call compinit or touch ~/.zshrc.
+mkdir -p "${HOME}/.zfunc"
+fpath=("$_MISE_COMP_DIR" "${HOME}/.zfunc" $fpath)
 if command -v mise >/dev/null 2>&1; then
     eval "$(mise activate zsh)"
     if [[ ! -r "${_MISE_COMP_DIR}/_mise" || \
@@ -107,6 +111,10 @@ if [[ -r "$zsh_plugins_txt" ]]; then
     # Phase 2: re-init to pick up _foo files that plugins added to fpath.
     compinit -C -d "$ZSH_COMPDUMP"
 fi
+
+# SSH completion: config Host aliases + suppress passwd users.
+# Must load after compinit — see zsh/ssh-completion.zsh for details.
+source "${ZSH_DOTFILES}/ssh-completion.zsh"
 
 # ---------- OMZ git library helpers ----------
 # OMZ's plugins/git provides the aliases (gpsup, gst, etc.) but their
