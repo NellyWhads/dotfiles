@@ -10,5 +10,9 @@ postinstall = "mise exec -- mise-completions-sync"
 
 [tools]
 uv = "0.10.10"
+# Node managed here instead of via lukechilds/zsh-nvm (which sourced ~700 lines
+# of bash on every shell startup). Project-level overrides via .mise.toml /
+# .tool-versions still work. Drop this line if you don't use node.
+node = "lts"
 # GitHub backend: key is "github:owner/repo", value is version (see https://mise.jdx.dev/dev-tools/backends/github.html)
 "github:alltuner/mise-completions-sync" = "latest"

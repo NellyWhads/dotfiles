@@ -44,3 +44,34 @@ To skip installing mise tools and linking config (e.g. for a minimal install or 
 ```bash
 SKIP_MISE_TOOL_INSTALL=1 sudo ./install.sh
 ```
+
+### zsh setup
+
+The shell is `zsh` with [antidote](https://getantidote.github.io) as the plugin
+manager (replacing antigen). Plugin list lives in `zsh/.zsh_plugins.txt` —
+edit, save, open a new shell. The cached bundle (`~/.zsh_plugins.zsh`) is
+regenerated automatically when the source list changes.
+
+Heavy plugins (`zsh-autosuggestions`, `fast-syntax-highlighting`,
+`alias-tips`, `almostontop`) are deferred via antidote's `kind:defer`
+annotation, so the prompt draws first and they kick in milliseconds later.
+
+To benchmark startup:
+
+```bash
+./scripts/zsh-bench.sh                  # current ~/.zshrc, 10 samples
+./scripts/zsh-bench.sh --compare        # current vs proposed, side-by-side
+./scripts/zsh-bench.sh --compare -n 20  # more samples for stability
+```
+
+`--proposed` and `--compare` run the proposed setup in an isolated
+`~/.cache/zsh-bench-proposed/` sandbox — **your real `~/.zshrc`,
+`~/.antidote`, and `~/.zsh_plugins.zsh` are not touched**. Antidote
+clones into the sandbox on first run if it isn't already on the system.
+Cleanup: `rm -rf ~/.cache/zsh-bench-proposed`.
+
+### Machine-local config
+
+Anything machine-specific (work secrets, SSO profiles, host-specific aliases)
+goes in `~/.zshrc.local` — it's sourced last by `~/.zshrc` and is never
+tracked.
