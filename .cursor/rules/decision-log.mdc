@@ -13,6 +13,7 @@ Create an ADR-style Markdown note.
 
 ## Instructions
 
+- Before writing under the vault, verify the resolved vault directory exists on disk; if missing, warn per `AGENTS.md` instead of writing there.
 - Be explicit about the decision.
 - Preserve why this option won.
 - Include rejected alternatives.

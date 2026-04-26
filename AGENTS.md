@@ -10,6 +10,7 @@ This repository participates in a durable knowledge workflow. Agents should not 
 - **Default capture destination**: `{vault}/inbox/` unless the user specifies another path under the vault.
 - **Other workspaces**: If the active project is not this dotfiles repo, do not assume the sibling heuristic; use `OBSIDIAN_VAULT` if set, or an explicit path the user gives.
 - **Repo-only learnings**: If the note is specific to another repository that is the current workspace, keep the file in that project unless the user asks for the vault.
+- **Verify vault before writing**: After resolving `{vault}`, confirm that path exists and is a directory (for example run `test -d` on it or list it). If it is missing, warn the user explicitly with the path you expected, remind them to clone the `obsidian-vault` repo beside this dotfiles clone or set `OBSIDIAN_VAULT`, and do not pretend notes were saved to the vault. You may still show the note in chat for copy-paste, or write only if the user supplies another valid directory.
 
 ## Memory behavior
 

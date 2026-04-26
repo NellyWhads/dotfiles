@@ -13,6 +13,7 @@ Create a durable Markdown note for Obsidian-compatible storage.
 
 ## Instructions
 
+- Before writing under the vault, resolve `{vault}` and verify it exists on disk (`test -d` or equivalent). If missing, warn per `AGENTS.md` and do not write into a non-existent vault path.
 - Use the standard capture template (`obsidian/templates/capture-note-template.md`).
 - Focus on what changed in understanding.
 - Include the exact files, commands, errors, or implementation details only when they are useful later.

@@ -4,6 +4,7 @@ description: >-
   Create Obsidian-compatible Markdown notes from research, coding sessions, project decisions, and durable learnings.
   Use when asked to save a learning, create a knowledge note, distill a concept, or produce a Markdown note for a vault.
   Default vault per dotfiles AGENTS.md — sibling directory obsidian-vault next to the dotfiles clone, or OBSIDIAN_VAULT if set.
+  Always verify the vault directory exists before writing; warn if it is missing.
 ---
 
 # Obsidian Note Writer
@@ -15,6 +16,22 @@ Create concise, durable Markdown notes that work well in Obsidian and can be lin
 ## Vault path
 
 Match `AGENTS.md` in the dotfiles repository: use `OBSIDIAN_VAULT` when set; otherwise the sibling folder `obsidian-vault` next to the `dotfiles` checkout. Write new captures under `{vault}/inbox/` unless the user specifies otherwise.
+
+When the workspace is the dotfiles repo, you can infer the sibling as `$(dirname <dotfiles-git-root>)/obsidian-vault`. When the workspace is something else, rely on `OBSIDIAN_VAULT` or a path the user states—do not guess a sibling vault.
+
+## Vault existence check (required)
+
+Before creating or updating any file under the resolved vault root:
+
+1. Resolve the vault directory `V` using the rules above.
+2. Verify `V` exists on disk and is a directory (for example run `test -d "${V}"` in the terminal, or use a filesystem listing tool on `V`).
+3. **If `V` exists:** proceed. You may create `{vault}/inbox/` if it is missing; do not create the vault root itself—only work inside an existing vault.
+4. **If `V` does not exist:** do not write notes into `V` as if the vault were there. Output a **warning** to the user that includes:
+   - the exact path `V` you checked;
+   - that the Obsidian vault does not appear cloned at the expected location;
+   - how to fix it: clone their `obsidian-vault` repository as a sibling of the dotfiles clone (same parent directory, folder name `obsidian-vault`), **or** set `OBSIDIAN_VAULT` to the real vault path and retry.
+
+   After warning, you may paste the full note in chat so they can save manually, or ask them for an alternate directory—only write to disk under a path they confirm exists.
 
 ## Instructions
 

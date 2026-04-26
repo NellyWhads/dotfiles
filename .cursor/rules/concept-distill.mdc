@@ -13,6 +13,7 @@ Transform implementation-specific learning into a durable concept note for the O
 
 ## Instructions
 
+- Before writing under the vault, verify the resolved vault directory exists on disk; if missing, warn per `AGENTS.md` instead of writing there.
 - Remove project noise unless it is essential.
 - Extract the principle, symptoms, failure modes, and practical heuristics.
 - Prefer reusable language over timeline language.
