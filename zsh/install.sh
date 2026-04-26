@@ -82,21 +82,22 @@ elif [ "$MACHINE" = "Arch" ]; then
 fi
 
 # ---------- Install pay-respects (typo corrector — Rust thefuck) ----------
-# Not in mise's standard registry, so install via brew/cargo/AUR.
+# Not in brew, not in mise's default registry. cargo is the universal
+# install path. On Arch, prefer an AUR helper (prebuilt) if available.
 printf '\e[34m%s\e[0m\n' "Installing pay-respects..." 1>&2
-if [ "$MACHINE" = "MacOS" ]; then
-    brew install pay-respects
-elif [ "$MACHINE" = "Ubuntu" ]; then
-    if command -v cargo >/dev/null 2>&1; then
-        cargo install pay-respects
+if [ "$MACHINE" = "Arch" ] && command -v yay >/dev/null 2>&1; then
+    yay -S --noconfirm pay-respects
+elif [ "$MACHINE" = "Arch" ] && command -v paru >/dev/null 2>&1; then
+    paru -S --noconfirm pay-respects
+elif command -v cargo >/dev/null 2>&1; then
+    # `cargo install` is idempotent — exits 0 with a note if already installed.
+    cargo install pay-respects
+else
+    printf '\e[33m%s\e[0m\n' "  Skipping pay-respects: cargo not found." 1>&2
+    if [ "$MACHINE" = "MacOS" ]; then
+        printf '\e[33m%s\e[0m\n' "    Install with: brew install rust && cargo install pay-respects" 1>&2
     else
-        printf '\e[33m%s\e[0m\n' "  Skipping pay-respects (no cargo). Install Rust then run: cargo install pay-respects" 1>&2
-    fi
-elif [ "$MACHINE" = "Arch" ]; then
-    if command -v yay >/dev/null 2>&1; then
-        yay -S --noconfirm pay-respects
-    elif command -v paru >/dev/null 2>&1; then
-        paru -S --noconfirm pay-respects
+        printf '\e[33m%s\e[0m\n' "    Install Rust (rustup), then: cargo install pay-respects" 1>&2
     fi
 fi
 
