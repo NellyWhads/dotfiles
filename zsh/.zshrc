@@ -20,6 +20,13 @@ export PATH
 
 REPOS_DIR="${HOME}/workspaces/public"
 
+# ---------- History size ----------
+# zsh's defaults are 1000 / 2000 — way too small for any modern shell.
+# zsh-saneopt enables HIST_IGNORE_DUPS / SHARE_HISTORY / etc. but doesn't
+# set the size. Atuin keeps its own SQLite history regardless of these.
+HISTSIZE=100000
+SAVEHIST=100000
+
 # ---------- Resolve dotfiles dir for sourcing peers (aliases.zsh, plugin list)
 # Follow symlinks: ~/.zshrc points at <repo>/zsh/.zshrc, so resolve and dirname.
 ZSH_DOTFILES="${ZSH_DOTFILES:-${${(%):-%x}:A:h}}"
