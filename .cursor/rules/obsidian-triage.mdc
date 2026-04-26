@@ -1,0 +1,10 @@
+---
+description: When the user asks to triage inbox notes, process an Obsidian inbox, or promote captures to permanent notes — use the triage workflow.
+alwaysApply: false
+---
+
+# Inbox triage
+
+Follow the steps and promotion criteria in `obsidian/workflows/triage-workflow.md`.
+
+When batch-triaging, use the agent prompt in that file and respect the vault layout from `AGENTS.md`.

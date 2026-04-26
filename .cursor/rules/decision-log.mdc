@@ -1,0 +1,60 @@
+---
+description: When the user asks to log a decision, record an architecture choice, or preserve reasoning behind a tradeoff — ADR-style Markdown note.
+alwaysApply: true
+---
+
+# Decision Log Rule
+
+Use this rule when the user asks to log a decision, record an architecture choice, or preserve reasoning behind a tradeoff.
+
+## Task
+
+Create an ADR-style Markdown note.
+
+## Instructions
+
+- Be explicit about the decision.
+- Preserve why this option won.
+- Include rejected alternatives.
+- Include consequences and revisit triggers.
+- Be terse but complete.
+
+## Output schema
+
+```md
+---
+id: ADR-YYYY-MM-DD-slug
+title: "..."
+date: YYYY-MM-DD
+source_tool: cursor
+source_project: repo-name
+tags: [adr, architecture]
+status: active
+---
+
+# Title
+
+## Context
+- 
+
+## Decision
+- 
+
+## Alternatives considered
+- Option A:
+- Option B:
+
+## Consequences
+- Positive:
+- Negative:
+
+## Revisit when
+- 
+
+## Related notes
+- [[...]]
+```
+
+## Success criteria
+
+A future reader should understand not just what was chosen, but why.

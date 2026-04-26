@@ -91,3 +91,8 @@ If another machine still has **Antigen**, **nvm**, **direnv**, **thefuck**, **py
 Anything machine-specific (work secrets, SSO profiles, host-specific aliases)
 goes in `~/.zshrc.local` — it's sourced last by `~/.zshrc` and is never
 tracked.
+
+### Cursor and Obsidian (durable notes)
+
+This repo includes an **AI memory kit**: `AGENTS.md` at the repo root, project rules under `.cursor/rules/`, pasteable prompts in `cursor/prompts/`, Obsidian templates in `obsidian/templates/`, and a triage workflow in `obsidian/workflows/`. Clone your vault as a sibling of this repo (e.g. `~/workspaces/public/obsidian-vault` next to `~/workspaces/public/dotfiles`) or set `OBSIDIAN_VAULT` to an absolute path. Copy `obsidian/templates/` into your vault’s templates folder if you use Obsidian’s templating. Optional: symlink `cursor/skills/obsidian-note-writer` into `~/.cursor/skills/` for the same behavior in other workspaces.
+

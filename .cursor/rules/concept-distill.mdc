@@ -1,0 +1,59 @@
+---
+description: When the user wants to turn a repo-specific lesson into a reusable concept note for the Obsidian vault.
+alwaysApply: true
+---
+
+# Concept Distill Rule
+
+Use this rule when the user wants to turn a repo-specific lesson into a reusable concept note for the Obsidian vault.
+
+## Task
+
+Transform implementation-specific learning into a durable concept note for the Obsidian vault.
+
+## Instructions
+
+- Remove project noise unless it is essential.
+- Extract the principle, symptoms, failure modes, and practical heuristics.
+- Prefer reusable language over timeline language.
+- Keep examples short.
+
+## Output schema
+
+````md
+---
+id: CONCEPT-slug
+title: "..."
+date: YYYY-MM-DD
+source_tool: cursor
+source_project: repo-name
+tags: [concept, engineering]
+status: evergreen
+---
+
+# Title
+
+## Principle
+- 
+
+## When this matters
+- 
+
+## Common failure modes
+- 
+
+## Heuristics
+- 
+
+## Minimal example
+```text
+...
+```
+
+## Related notes
+- [[...]]
+````
+
+## Success criteria
+
+The note should still be useful even if the original repo disappears.

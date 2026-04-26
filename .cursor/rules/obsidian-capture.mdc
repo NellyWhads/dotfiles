@@ -1,0 +1,66 @@
+---
+description: When the user asks to save a learning, remember something, or create a note from current work — Obsidian capture note with YAML frontmatter.
+alwaysApply: true
+---
+
+# Obsidian Capture Rule
+
+Use this rule when the user asks to save a learning, remember something, or create a note from current work.
+
+## Task
+
+Create a durable Markdown note for Obsidian-compatible storage.
+
+## Instructions
+
+- Use the standard capture template (`obsidian/templates/capture-note-template.md`).
+- Focus on what changed in understanding.
+- Include the exact files, commands, errors, or implementation details only when they are useful later.
+- Put project-specific context under `What happened`.
+- Put generalized guidance under `Reusable pattern`.
+- Add 3 to 8 tags.
+- Add 2 to 5 likely wikilinks.
+- Keep the note concise.
+
+## Output schema
+
+````md
+---
+id: KNOW-YYYY-MM-DD-slug
+title: "..."
+date: YYYY-MM-DD
+source_tool: cursor
+source_project: repo-name
+tags: [tag1, tag2]
+status: inbox
+---
+
+# Title
+
+## Summary
+- 
+
+## What happened
+- 
+
+## Key learning
+- 
+
+## Reusable pattern
+- 
+
+## Evidence or code
+```text
+...
+```
+
+## Related notes
+- [[...]]
+
+## Next actions
+- 
+````
+
+## Success criteria
+
+A future engineer should understand the lesson in under one minute.
