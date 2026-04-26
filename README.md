@@ -94,5 +94,47 @@ tracked.
 
 ### Cursor and Obsidian (durable notes)
 
-This repo includes an **AI memory kit**: `AGENTS.md` at the repo root, project rules under `.cursor/rules/`, pasteable prompts in `cursor/prompts/`, Obsidian templates in `obsidian/templates/`, and a triage workflow in `obsidian/workflows/`. Clone your vault as a sibling of this repo (e.g. `~/workspaces/public/obsidian-vault` next to `~/workspaces/public/dotfiles`) or set `OBSIDIAN_VAULT` to an absolute path. Copy `obsidian/templates/` into your vault’s templates folder if you use Obsidian’s templating. Optional: symlink `cursor/skills/obsidian-note-writer` into `~/.cursor/skills/` for the same behavior in other workspaces.
+This repo includes an **AI memory kit**: `AGENTS.md` at the repo root, project rules under `.cursor/rules/`, pasteable prompts in `cursor/prompts/`, Obsidian templates in `obsidian/templates/`, and a triage workflow in `obsidian/workflows/`. Clone your vault as a sibling of this repo (e.g. `~/workspaces/public/obsidian-vault` next to `~/workspaces/public/dotfiles`) or set `OBSIDIAN_VAULT` to an absolute path. Copy `obsidian/templates/` into your vault’s templates folder if you use Obsidian’s templating.
+
+#### Cursor — rules and prompts (this repo)
+
+Open the **dotfiles** folder as the Cursor workspace. Cursor loads `AGENTS.md` and `.cursor/rules/*.mdc` from the project automatically. Prompts under `cursor/prompts/` are plain Markdown: paste into chat or save as Cursor **Notepad** / user snippets if you want one-click access.
+
+#### Cursor — global skill (all workspaces)
+
+Cursor loads personal skills from `~/.cursor/skills/<skill-name>/SKILL.md`. Point that at the copy in this repo so every project can use the same note writer (adjust `DOTFILES` if your clone is not under `~/workspaces/public/dotfiles`):
+
+```bash
+DOTFILES="${HOME}/workspaces/public/dotfiles"
+mkdir -p "${HOME}/.cursor/skills"
+ln -sfn "${DOTFILES}/cursor/skills/obsidian-note-writer" "${HOME}/.cursor/skills/obsidian-note-writer"
+```
+
+Optional: install the skill for **one other repo only** — from that repo’s root:
+
+```bash
+DOTFILES="${HOME}/workspaces/public/dotfiles"
+mkdir -p .cursor/skills
+ln -sfn "${DOTFILES}/cursor/skills/obsidian-note-writer" .cursor/skills/obsidian-note-writer
+```
+
+When the active workspace is not dotfiles, prefer setting **`OBSIDIAN_VAULT`** to your vault’s absolute path so capture paths stay correct (see `AGENTS.md`).
+
+#### Claude Code — skill install
+
+Claude Code discovers skills under `~/.claude/skills/<skill-name>/SKILL.md` (personal, all projects) or `.claude/skills/` inside a project. The same `obsidian-note-writer` folder works for Claude Code because it uses the same `SKILL.md` layout:
+
+```bash
+DOTFILES="${HOME}/workspaces/public/dotfiles"
+mkdir -p "${HOME}/.claude/skills"
+ln -sfn "${DOTFILES}/cursor/skills/obsidian-note-writer" "${HOME}/.claude/skills/obsidian-note-writer"
+```
+
+Restart Claude Code if `~/.claude/skills` did not exist before (so the directory is watched). Then you can run **`/obsidian-note-writer`** or ask in natural language to save a learning; Claude loads the skill when it matches the `description` in the frontmatter.
+
+For work **outside** this dotfiles clone, set **`OBSIDIAN_VAULT`** (or add your vault path to project `CLAUDE.md`) so “sibling of dotfiles” is not relied on.
+
+#### Claude Desktop or claude.ai (browser)
+
+There is no shared on-disk “skills” folder like Cursor or Claude Code. Practical options: paste the **Memory behavior** and **Vault and default paths** sections from `AGENTS.md` into **Custom instructions** (or project instructions), and/or attach `AGENTS.md` when you start a project thread. For repeatable structure, keep a short snippet in your instructions that points at the same capture/decision/concept headings as `cursor/skills/obsidian-note-writer/SKILL.md`.
 
