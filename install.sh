@@ -66,7 +66,8 @@ if [ "$MACHINE" = "MacOS" ] && [ "$(id -u)" -eq 0 ]; then
     exit 1
 fi
 if [ "$USER" != "root" ] && { [ "$MACHINE" = "Ubuntu" ] || [ "$MACHINE" = "Arch" ]; }; then
-    printf '\e[33m%s\e[0m\n' "Note: On $MACHINE this usually needs sudo (e.g. 'sudo -E ./install.sh' on Ubuntu)." 1>&2
+    printf '\e[33m%s\e[0m\n' "Note: On $MACHINE the script will use inline sudo for apt/pacman, /etc/shells, chsh." 1>&2
+    printf '\e[33m%s\e[0m\n' "      You'll be prompted for your password as needed." 1>&2
 fi
 
 # Get UI type from CLI args

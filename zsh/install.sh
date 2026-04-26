@@ -5,6 +5,35 @@ printf '\n\e[34;1m%s\e[0m\n\n' "--------ZSH Installation--------" 1>&2
 
 export ZSH_DIR=$(pwd)
 
+# ---------- Helper: ensure cargo is available (needed by pay-respects) ----------
+# Install Rust toolchain if missing, using the OS-appropriate method.
+# - macOS: brew install rust (latest stable)
+# - Linux: rustup non-interactive (latest stable; apt's cargo can be too old
+#          for crates that require recent edition features, e.g. edition2024)
+ensure_cargo() {
+    if command -v cargo >/dev/null 2>&1; then
+        return 0
+    fi
+    case "$MACHINE" in
+        MacOS)
+            brew install rust
+            ;;
+        Ubuntu|Arch)
+            printf '\e[34m%s\e[0m\n' "  Installing rustup non-interactively (latest stable)..." 1>&2
+            curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs \
+                | sh -s -- -y --default-toolchain stable --profile minimal
+            # Make ~/.cargo/bin available in this script's process for the
+            # subsequent cargo install calls.
+            if [ -f "$HOME/.cargo/env" ]; then
+                # shellcheck disable=SC1091
+                . "$HOME/.cargo/env"
+            else
+                export PATH="$HOME/.cargo/bin:$PATH"
+            fi
+            ;;
+    esac
+}
+
 # ---------- Install zsh ----------
 printf '\e[34m%s\e[0m\n' "Installing zsh..." 1>&2
 if [ "$MACHINE" = "Ubuntu" ]; then
@@ -73,7 +102,10 @@ if [ "$MACHINE" = "Ubuntu" ]; then
     if apt-cache show starship >/dev/null 2>&1; then
         sudo apt-get install -y starship
     else
-        curl -sS https://starship.rs/install.sh | sh -s -- --yes
+        # Install to ~/.local/bin (already in PATH per .zshrc) so we don't
+        # need sudo to write to /usr/local/bin.
+        mkdir -p "$HOME/.local/bin"
+        curl -sS https://starship.rs/install.sh | sh -s -- --yes --bin-dir "$HOME/.local/bin"
     fi
 elif [ "$MACHINE" = "MacOS" ]; then
     brew install starship
@@ -91,24 +123,25 @@ fi
 # edition2024 → Rust 1.85+).
 printf '\e[34m%s\e[0m\n' "Installing pay-respects..." 1>&2
 
-PR_CARGO="$(command -v cargo || true)"
-if [ "$MACHINE" = "MacOS" ] && [ -x "/opt/homebrew/bin/cargo" ]; then
-    PR_CARGO="/opt/homebrew/bin/cargo"
-fi
-
 if [ "$MACHINE" = "Arch" ] && command -v yay >/dev/null 2>&1; then
-    yay -S --noconfirm pay-respects
+    yay -S --noconfirm pay-respects || \
+        printf '\e[33m%s\e[0m\n' "  pay-respects install failed (continuing)" 1>&2
 elif [ "$MACHINE" = "Arch" ] && command -v paru >/dev/null 2>&1; then
-    paru -S --noconfirm pay-respects
-elif [ -n "$PR_CARGO" ]; then
-    # `cargo install` is idempotent — exits 0 with a note if already installed.
-    "$PR_CARGO" install pay-respects
+    paru -S --noconfirm pay-respects || \
+        printf '\e[33m%s\e[0m\n' "  pay-respects install failed (continuing)" 1>&2
 else
-    printf '\e[33m%s\e[0m\n' "  Skipping pay-respects: cargo not found." 1>&2
-    if [ "$MACHINE" = "MacOS" ]; then
-        printf '\e[33m%s\e[0m\n' "    Install with: brew install rust && cargo install pay-respects" 1>&2
+    ensure_cargo
+    PR_CARGO="$(command -v cargo || true)"
+    if [ "$MACHINE" = "MacOS" ] && [ -x "/opt/homebrew/bin/cargo" ]; then
+        PR_CARGO="/opt/homebrew/bin/cargo"
+    fi
+    if [ -n "$PR_CARGO" ]; then
+        # cargo install is idempotent — exits 0 with a note if already installed.
+        # Don't let a build failure abort the rest of the script.
+        "$PR_CARGO" install pay-respects || \
+            printf '\e[33m%s\e[0m\n' "  pay-respects install failed (continuing). Try: cargo install pay-respects" 1>&2
     else
-        printf '\e[33m%s\e[0m\n' "    Install Rust (rustup), then: cargo install pay-respects" 1>&2
+        printf '\e[33m%s\e[0m\n' "  Skipping pay-respects: cargo not found and rustup install failed." 1>&2
     fi
 fi
 
@@ -122,10 +155,14 @@ if [ "$MACHINE" = "MacOS" ]; then
 elif [ "$MACHINE" = "Ubuntu" ]; then
     if apt-cache show tealdeer >/dev/null 2>&1; then
         sudo apt-get install -y tealdeer
-    elif command -v cargo >/dev/null 2>&1; then
-        cargo install tealdeer
     else
-        printf '\e[33m%s\e[0m\n' "  Skipping tealdeer (no apt pkg, no cargo)." 1>&2
+        ensure_cargo
+        if command -v cargo >/dev/null 2>&1; then
+            cargo install tealdeer || \
+                printf '\e[33m%s\e[0m\n' "  tealdeer install failed (continuing)" 1>&2
+        else
+            printf '\e[33m%s\e[0m\n' "  Skipping tealdeer: no apt pkg and cargo not available." 1>&2
+        fi
     fi
 elif [ "$MACHINE" = "Arch" ]; then
     pacman -S --noconfirm tealdeer

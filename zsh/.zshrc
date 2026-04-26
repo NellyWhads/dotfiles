@@ -6,12 +6,14 @@
 # over rustup's (rustup's stable can lag behind for new edition features).
 # ~/.cargo/bin still needs to be on PATH so cargo-installed binaries
 # (pay-respects, etc.) are found.
+# Non-existent paths are harmless — zsh just won't find anything in them.
 typeset -U path PATH    # de-dup
 path=(
-    "$HOME/.local/bin"
-    "/opt/homebrew/bin"           # macOS Apple Silicon homebrew (cargo, brew, ...)
-    "/usr/local/bin"
-    "$HOME/.cargo/bin"            # cargo-installed binaries
+    "$HOME/.local/bin"                          # mise binary, starship (Ubuntu fallback)
+    "/opt/homebrew/bin"                         # macOS Apple Silicon homebrew
+    "/home/linuxbrew/.linuxbrew/bin"            # Linuxbrew (if used)
+    "/usr/local/bin"                            # macOS Intel homebrew, generic
+    "$HOME/.cargo/bin"                          # cargo-installed binaries
     $path
 )
 export PATH
