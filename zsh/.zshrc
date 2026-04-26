@@ -193,11 +193,19 @@ fi
 
 # ---------- atuin: SQLite-backed shell history.
 # We init with --disable-up-arrow --disable-ctrl-r so HSM keeps Ctrl-R
-# (you said you like its UI). atuin still records every command into
-# ~/.local/share/atuin/history.db; query with `atuin search <pattern>`.
-# To switch to atuin's Ctrl-R fully, drop the two --disable flags. ----------
+# (its multi-word UI is great as the default). atuin records every
+# command into ~/.local/share/atuin/history.db regardless.
+#
+# Hybrid keybinding strategy:
+#   Ctrl-R = HSM (default, fast, multi-word fuzzy)
+#   Alt-R  = atuin's full TUI (Tab cycles Global → Host → Session → Directory)
+#   `atuin search <pattern>` from CLI for ad-hoc queries
+#   `atuin stats` for fun (top commands, longest sessions, etc.) ----------
 if command -v atuin >/dev/null 2>&1; then
     eval "$(atuin init zsh --disable-up-arrow --disable-ctrl-r)"
+    # `_atuin_search` is defined by `atuin init` even with --disable-ctrl-r;
+    # we just re-bind it to a key that doesn't fight HSM.
+    bindkey '^[r' _atuin_search   # Alt-R
 fi
 
 # ---------- aliases / functions ----------
