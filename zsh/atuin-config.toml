@@ -1,0 +1,45 @@
+# atuin config — symlinked to ~/.config/atuin/config.toml by zsh/install.sh
+# https://docs.atuin.sh/configuration/config/
+#
+# Atuin's truly machine-local state (SQLite DB, encryption key, login
+# session) lives in ~/.local/share/atuin/, NOT here — so it's safe to
+# track this file across machines.
+
+# ───────── Search defaults ─────────
+
+# When opening the search UI (Alt-R, bound in .zshrc), default to
+# showing only commands run in the current directory or its descendants.
+# Tab inside the UI cycles: Directory → Global → Host → Session.
+filter_mode = "directory"
+
+# Same for the up-arrow widget (only relevant if you ever drop atuin's
+# --disable-up-arrow flag in .zshrc).
+filter_mode_shell_up_key_binding = "directory"
+
+# Fuzzy matching feels closest to HSM/fzf muscle memory.
+# Other options: "prefix", "fulltext", "skim".
+search_mode = "fuzzy"
+
+# ───────── Privacy / safety ─────────
+
+# Sync = OFF. Atuin would otherwise push (encrypted) history to
+# api.atuin.sh. For Torc/work shells, leave disabled. To turn on
+# later, run `atuin register` against a self-hosted server, then
+# flip this to true.
+auto_sync = false
+
+# Try to redact things that look like secrets (API keys, tokens, etc.)
+# before storing. Belt-and-suspenders alongside ~/.zshrc.local.
+secrets_filter = true
+
+# ───────── UX ─────────
+
+# Show the selected command's full text in a preview pane.
+show_preview = true
+
+# Keybinding hint bar at the bottom of the TUI.
+show_help = true
+
+# Open the TUI inline rather than fullscreen (set to a number of lines
+# like 25 to use that much screen, or 0 for fullscreen). 0 = fullscreen.
+inline_height = 0
