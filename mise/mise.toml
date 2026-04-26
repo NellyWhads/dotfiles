@@ -16,3 +16,12 @@ uv = "0.10.10"
 node = "lts"
 # GitHub backend: key is "github:owner/repo", value is version (see https://mise.jdx.dev/dev-tools/backends/github.html)
 "github:alltuner/mise-completions-sync" = "latest"
+
+# --- Modern CLI tools — shell integration lives in zsh/.zshrc ---
+zoxide   = "latest"   # smart `cd` with frecency (use `z foo`, or `zi` for fzf picker)
+bat      = "latest"   # `cat` w/ syntax highlighting + line numbers (also powers fzf previews)
+ripgrep  = "latest"   # 10x faster grep, sane defaults
+fd       = "latest"   # simpler/faster `find`; backs FZF_DEFAULT_COMMAND
+delta    = "latest"   # side-by-side syntax-highlighted git diff viewer
+tealdeer = "latest"   # `tldr` simplified man pages, Rust-fast
+atuin    = "latest"   # SQLite-backed shell history (local-only by default)

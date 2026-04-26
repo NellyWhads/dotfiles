@@ -81,6 +81,48 @@ elif [ "$MACHINE" = "Arch" ]; then
     pacman -S --noconfirm starship
 fi
 
+# ---------- Install pay-respects (typo corrector — Rust thefuck) ----------
+# Not yet in mise's standard registry, so install via brew/cargo/AUR.
+printf '\e[34m%s\e[0m\n' "Installing pay-respects..." 1>&2
+if [ "$MACHINE" = "MacOS" ]; then
+    brew install pay-respects
+elif [ "$MACHINE" = "Ubuntu" ]; then
+    if command -v cargo >/dev/null 2>&1; then
+        cargo install pay-respects
+    else
+        printf '\e[33m%s\e[0m\n' "  Skipping pay-respects (no cargo). Install Rust then run: cargo install pay-respects" 1>&2
+    fi
+elif [ "$MACHINE" = "Arch" ]; then
+    if command -v yay >/dev/null 2>&1; then
+        yay -S --noconfirm pay-respects
+    elif command -v paru >/dev/null 2>&1; then
+        paru -S --noconfirm pay-respects
+    fi
+fi
+
+# ---------- Clone fzf-git.sh (Ctrl-G key bindings for fuzzy git) ----------
+# Single shell script, not a binary — clone to a stable path and source it
+# from .zshrc.
+printf '\e[34m%s\e[0m\n' "Installing fzf-git.sh..." 1>&2
+FZF_GIT_DIR="${HOME}/.local/share/fzf-git.sh"
+if [ -d "${FZF_GIT_DIR}/.git" ]; then
+    git -C "${FZF_GIT_DIR}" pull --ff-only --quiet
+else
+    mkdir -p "$(dirname "${FZF_GIT_DIR}")"
+    git clone --quiet --depth=1 https://github.com/junegunn/fzf-git.sh.git "${FZF_GIT_DIR}"
+fi
+
+# ---------- Wire delta into git's pager ----------
+# Idempotent — these git config lines are global but only set the delta
+# integration; they don't touch user.name / user.email.
+if command -v delta >/dev/null 2>&1 || mise which delta >/dev/null 2>&1; then
+    printf '\e[34m%s\e[0m\n' "Wiring delta into ~/.gitconfig..." 1>&2
+    git config --global core.pager delta
+    git config --global interactive.diffFilter 'delta --color-only'
+    git config --global delta.navigate true
+    git config --global merge.conflictstyle zdiff3
+fi
+
 # ---------- Link configs ----------
 printf '\e[34m%s\e[0m\n' "Linking configs..." 1>&2
 ln -sfn "$ZSH_DIR/.zshrc" "$HOME/.zshrc"

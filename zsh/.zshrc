@@ -95,6 +95,17 @@ if [[ -r "$zsh_plugins_txt" ]]; then
 fi
 
 # ---------- fzf key bindings + completions (cross-platform) ----------
+# Use fd as the file source if present (faster, respects .gitignore by
+# default). Use bat for previews if present.
+if command -v fd >/dev/null 2>&1; then
+    export FZF_DEFAULT_COMMAND='fd --type f --hidden --follow --exclude .git'
+    export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
+    export FZF_ALT_C_COMMAND='fd --type d --hidden --follow --exclude .git'
+fi
+if command -v bat >/dev/null 2>&1; then
+    export FZF_CTRL_T_OPTS="--preview 'bat --color=always --style=numbers --line-range=:200 {} 2>/dev/null || cat {}'"
+fi
+
 for _fzf_path in \
     "/opt/homebrew/opt/fzf/shell/key-bindings.zsh" \
     "/usr/share/fzf/key-bindings.zsh" \
@@ -115,6 +126,31 @@ for _fzf_comp in \
     fi
 done
 unset _fzf_comp
+
+# fzf-git.sh: Ctrl-G [B/T/H/R/S/W] for fuzzy branches/tags/hashes/remotes/
+# status/worktrees, all with live diff/log preview. Cloned by zsh/install.sh.
+[[ -r "${HOME}/.local/share/fzf-git.sh/fzf-git.sh" ]] && \
+    source "${HOME}/.local/share/fzf-git.sh/fzf-git.sh"
+
+# ---------- zoxide: smarter `cd` with frecency. `z foo` jumps to the
+# best match by usage; `zi` opens an fzf picker. ----------
+if command -v zoxide >/dev/null 2>&1; then
+    eval "$(zoxide init zsh)"
+fi
+
+# ---------- pay-respects: type `f` after a typo to fix and re-run ----------
+if command -v pay-respects >/dev/null 2>&1; then
+    eval "$(pay-respects --alias f)"
+fi
+
+# ---------- atuin: SQLite-backed shell history.
+# We init with --disable-up-arrow --disable-ctrl-r so HSM keeps Ctrl-R
+# (you said you like its UI). atuin still records every command into
+# ~/.local/share/atuin/history.db; query with `atuin search <pattern>`.
+# To switch to atuin's Ctrl-R fully, drop the two --disable flags. ----------
+if command -v atuin >/dev/null 2>&1; then
+    eval "$(atuin init zsh --disable-up-arrow --disable-ctrl-r)"
+fi
 
 # ---------- aliases / functions ----------
 [[ -r "${ZSH_DOTFILES}/aliases.zsh" ]] && source "${ZSH_DOTFILES}/aliases.zsh"

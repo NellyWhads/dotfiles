@@ -26,3 +26,17 @@ alias gwd='git rev-parse --show-toplevel'
 alias gst='git worktree prune ; git worktree list | grep --color -E "$(gwd).*|$" ; git --no-pager branch ; git status --short ; git --no-pager stash list'
 alias grbom='git fetch origin $(git_main_branch) && git rebase origin/$(git_main_branch)'
 alias grbiom='git fetch origin $(git_main_branch) && git rebase -i origin/$(git_main_branch)'
+
+# --- fkill: pick processes via fzf, kill selected ---
+# Usage: `fkill` (default SIGTERM) or `fkill 9` (SIGKILL).
+# Tab multi-selects; Enter sends the signal.
+fkill() {
+    local pids
+    pids=$(ps -ef | sed 1d | fzf -m \
+        --header="[fkill: Tab to multi-select, Enter to send signal ${1:-15}]" \
+        --preview='echo {}' --preview-window=down:3:wrap \
+        | awk '{print $2}')
+    if [[ -n "$pids" ]]; then
+        echo "$pids" | xargs kill -"${1:-15}"
+    fi
+}
