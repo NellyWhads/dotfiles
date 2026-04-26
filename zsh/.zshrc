@@ -203,18 +203,21 @@ fi
 #   `atuin stats` for fun (top commands, longest sessions, etc.) ----------
 if command -v atuin >/dev/null 2>&1; then
     eval "$(atuin init zsh --disable-up-arrow --disable-ctrl-r)"
-    # `_atuin_search` is defined by `atuin init` even with --disable-ctrl-r;
-    # re-bind it to keys that don't fight HSM. Multiple bindings hit different
-    # terminals' encodings:
+    # The widget name is `atuin-search` (atuin's `zle -N atuin-search
+    # _atuin_search` makes the underscore-prefix the inner function and
+    # the dash-prefix the actual ZLE widget — bindkey wants the widget).
+    # Atuin defines this widget regardless of --disable-ctrl-r; we just
+    # bind it to keys that don't fight HSM. Multiple bindings to handle
+    # different terminals' encodings:
     #   ^X^R      universal chord — works in every terminal, every mode
-    #   CSI u    Ctrl-Shift-R when the terminal uses kitty keyboard protocol
-    #            (ghostty, kitty, wezterm by default; iTerm2 needs the
-    #             "Report modifiers using CSI u" setting enabled).
+    #   CSI u    Ctrl-Shift-R when the terminal uses the kitty keyboard
+    #            protocol (ghostty, kitty, wezterm by default; iTerm2 needs
+    #            the "Report modifiers using CSI u" setting enabled).
     # Note: legacy terminal mode can't distinguish Ctrl-Shift-R from Ctrl-R,
     # which is why we don't try to bind a literal `^R` for Shift here.
-    bindkey '^X^R'      _atuin_search    # Ctrl-X Ctrl-R (universal)
-    bindkey '^[[82;5u'  _atuin_search    # Ctrl-Shift-R, iTerm2-style CSI u
-    bindkey '^[[114;6u' _atuin_search    # Ctrl-Shift-R, kitty-style CSI u
+    bindkey '^X^R'      atuin-search    # Ctrl-X Ctrl-R (universal)
+    bindkey '^[[82;5u'  atuin-search    # Ctrl-Shift-R, iTerm2-style CSI u
+    bindkey '^[[114;6u' atuin-search    # Ctrl-Shift-R, kitty-style CSI u
 fi
 
 # ---------- aliases / functions ----------
