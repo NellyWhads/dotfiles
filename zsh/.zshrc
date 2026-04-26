@@ -2,12 +2,16 @@
 # Goals: fast startup, declarative plugin list, cross-platform (macOS/Linux).
 
 # ---------- PATH (early, before anything sources binaries) ----------
+# Order matters: homebrew goes BEFORE ~/.cargo/bin so brew's cargo wins
+# over rustup's (rustup's stable can lag behind for new edition features).
+# ~/.cargo/bin still needs to be on PATH so cargo-installed binaries
+# (pay-respects, etc.) are found.
 typeset -U path PATH    # de-dup
 path=(
     "$HOME/.local/bin"
-    "$HOME/.cargo/bin"            # cargo-installed binaries (e.g. pay-respects)
-    "/opt/homebrew/bin"           # macOS Apple Silicon homebrew
+    "/opt/homebrew/bin"           # macOS Apple Silicon homebrew (cargo, brew, ...)
     "/usr/local/bin"
+    "$HOME/.cargo/bin"            # cargo-installed binaries
     $path
 )
 export PATH

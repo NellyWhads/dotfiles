@@ -84,14 +84,25 @@ fi
 # ---------- Install pay-respects (typo corrector — Rust thefuck) ----------
 # Not in brew, not in mise's default registry. cargo is the universal
 # install path. On Arch, prefer an AUR helper (prebuilt) if available.
+#
+# On macOS we explicitly prefer brew's cargo (/opt/homebrew/bin/cargo).
+# rustup's ~/.cargo/bin/cargo can lag the toolchain version brew tracks
+# and miss new Rust edition features (pay-respects 0.8.7 needs
+# edition2024 → Rust 1.85+).
 printf '\e[34m%s\e[0m\n' "Installing pay-respects..." 1>&2
+
+PR_CARGO="$(command -v cargo || true)"
+if [ "$MACHINE" = "MacOS" ] && [ -x "/opt/homebrew/bin/cargo" ]; then
+    PR_CARGO="/opt/homebrew/bin/cargo"
+fi
+
 if [ "$MACHINE" = "Arch" ] && command -v yay >/dev/null 2>&1; then
     yay -S --noconfirm pay-respects
 elif [ "$MACHINE" = "Arch" ] && command -v paru >/dev/null 2>&1; then
     paru -S --noconfirm pay-respects
-elif command -v cargo >/dev/null 2>&1; then
+elif [ -n "$PR_CARGO" ]; then
     # `cargo install` is idempotent — exits 0 with a note if already installed.
-    cargo install pay-respects
+    "$PR_CARGO" install pay-respects
 else
     printf '\e[33m%s\e[0m\n' "  Skipping pay-respects: cargo not found." 1>&2
     if [ "$MACHINE" = "MacOS" ]; then
