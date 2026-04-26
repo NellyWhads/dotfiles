@@ -23,5 +23,6 @@ bat      = "latest"   # `cat` w/ syntax highlighting + line numbers (also powers
 ripgrep  = "latest"   # 10x faster grep, sane defaults
 fd       = "latest"   # simpler/faster `find`; backs FZF_DEFAULT_COMMAND
 delta    = "latest"   # side-by-side syntax-highlighted git diff viewer
-tealdeer = "latest"   # `tldr` simplified man pages, Rust-fast
+# tealdeer isn't in mise's default registry — pull via the aqua backend.
+"aqua:tealdeer-rs/tealdeer" = "latest"   # `tldr` simplified man pages, Rust-fast
 atuin    = "latest"   # SQLite-backed shell history (local-only by default)
