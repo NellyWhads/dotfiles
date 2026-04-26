@@ -144,8 +144,10 @@ if command -v zoxide >/dev/null 2>&1; then
 fi
 
 # ---------- pay-respects: type `f` after a typo to fix and re-run ----------
+# Correct CLI form is `pay-respects <shell> [--alias <name>]` — the shell
+# name is positional, not a flag.
 if command -v pay-respects >/dev/null 2>&1; then
-    eval "$(pay-respects --alias f)"
+    eval "$(pay-respects zsh --alias f)"
 fi
 
 # ---------- atuin: SQLite-backed shell history.
