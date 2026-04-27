@@ -1,17 +1,19 @@
 # git-alias-completion.zsh — make Tab after OMZ-style git aliases use _git, not _files.
 #
-# Problem: aliases like glog='git log …' define a *new* command word. Unless
-# complete_aliases is set (and/or compdef maps the alias to the git-* service),
-# zsh completes "glog" with file names — not branches/tags/commits.
+# Problem: aliases like glog='git log …' define a *new* command word. Without
+# compdef mapping each alias to _git with the right service (gco=git-checkout,
+# etc.), zsh completes "glog" with file names — not branches/tags/commits.
+#
+# Do NOT use setopt complete_aliases here: it makes Git's zsh completion call
+# __git_find_on_cmdline with a broken cmdline and triggers errors like
+# "__git_find_on_cmdline:[:17: unknown condition: -lt" when completing gco/glog/…
+# (see ohmyzsh#2394 and similar reports). compdef alone is sufficient.
 #
 # Load after the antidote bundle (git.plugin.zsh) and compinit — see .zshrc.
 
 emulate -L zsh
 
-# Expand aliases for completion so "glog <Tab>" is completed like "git log …".
-setopt complete_aliases
-
-# Belt-and-suspenders: map common oh-my-zsh git plugin aliases to the same
+# Map common oh-my-zsh git plugin aliases to the same
 # _git services OMZ uses for functions (see git.plugin.zsh compdef lines).
 # Only register when the alias exists (user may trim the plugin list).
 if (( ${+functions[compdef]} )); then

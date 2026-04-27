@@ -77,7 +77,7 @@ atuin stats                          # top commands, longest sessions, etc.
 
 Try: `git checkout <Tab>`, `kill <Tab>`, `cd <Tab>`, `ssh <Tab>`.
 
-**Git aliases (`glog`, `gco`, …):** if Tab offered only files, your shell was completing the alias *name* instead of `git`. This repo sources `git-alias-completion.zsh` (`setopt complete_aliases` + `compdef _git …=git-*`) so OMZ-style `g*` aliases get branch/tag/commit completion like `git …`.
+**Git aliases (`glog`, `gco`, …):** if Tab offered only files, your shell was completing the alias *name* instead of `git`. This repo sources `git-alias-completion.zsh` (`compdef _git …=git-*` per alias — no `complete_aliases`, which breaks Git's `_git` helpers with `unknown condition: -lt` errors).
 
 ---
 

@@ -62,3 +62,8 @@ if command -v fd >/dev/null 2>&1; then
     alias ffh='fd -H'          # include hidden / dotfiles
     alias ffa='fd -HI'         # include hidden AND .gitignored
 fi
+
+# OMZ lib/directories.zsh supplies `md`/`rd`; if the antidote cache path ever
+# misses, these one-liners keep mkdir ergonomics without maintaining the full lib.
+(( ${+aliases[md]} )) || alias md='mkdir -p'
+(( ${+aliases[rd]} )) || alias rd='rmdir'

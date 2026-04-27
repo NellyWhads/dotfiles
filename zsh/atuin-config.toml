@@ -7,9 +7,11 @@
 
 # ───────── Search defaults ─────────
 
-# When opening the search UI (Alt-R, bound in .zshrc), default to
-# showing only commands run in the current directory or its descendants.
-# Tab inside the UI cycles: Directory → Global → Host → Session.
+# When opening the search UI (Alt-R / Ctrl-X Ctrl-R, bound in .zshrc), default
+# to showing only commands run in the current directory or its descendants.
+# Tab inside the UI cycles: Directory → Global → Host → Session. If it feels
+# like "terminals don't share history," try Global — other tabs may be in
+# different cwd and Directory mode hides their commands by design.
 filter_mode = "directory"
 
 # Same for the up-arrow widget (only relevant if you ever drop atuin's

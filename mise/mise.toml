@@ -28,3 +28,7 @@ delta    = "latest"   # side-by-side syntax-highlighted git diff viewer
 # mise's default registry nor the aqua backend can fetch them. brew
 # (macOS) and cargo (Linux fallback) handle it directly.
 atuin    = "latest"   # SQLite-backed shell history (local-only by default)
+
+# Work- or machine-specific [env] (registry tokens, W&B, etc.): use
+# ~/.config/mise/config.toml, `mise.toml` in a private path, or env vars — do not
+# commit secrets to this public repo.

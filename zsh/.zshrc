@@ -22,8 +22,9 @@ REPOS_DIR="${HOME}/workspaces/public"
 
 # ---------- History size ----------
 # zsh's defaults are 1000 / 2000 — way too small for any modern shell.
-# zsh-saneopt enables HIST_IGNORE_DUPS / SHARE_HISTORY / etc. but doesn't
-# set the size. Atuin keeps its own SQLite history regardless of these.
+# zsh-saneopt sets append_history / extended_history / etc. but does NOT enable
+# SHARE_HISTORY (see its plugin file — those lines are commented upstream).
+# Atuin keeps its own SQLite history regardless of the options below.
 HISTSIZE=100000
 SAVEHIST=100000
 
@@ -110,7 +111,45 @@ if [[ -r "$zsh_plugins_txt" ]]; then
     source "$zsh_plugins_zsh"
     # Phase 2: re-init to pick up _foo files that plugins added to fpath.
     compinit -C -d "$ZSH_COMPDUMP"
+
+    # ---------- OMZ lib/directories.zsh (must run AFTER plugin source) ----------
+    # `antidote bundle` only writes ~/.zsh_plugins.zsh; oh-my-zsh is cloned when
+    # that script is sourced above. Sourcing directories.zsh *before* the bundle
+    # often missed the file, so `md` never appeared. Loading it here is safe:
+    # it temporarily resets `l`/`ll`/`la` to plain ls; we re-run zsh-lsd's
+    # `.zsh-lsd` when present so listing aliases match the plugin again.
+    for _omz_directories in \
+        "$HOME/Library/Caches/antidote/github.com/ohmyzsh/ohmyzsh/lib/directories.zsh" \
+        "$HOME/.cache/antidote/github.com/ohmyzsh/ohmyzsh/lib/directories.zsh"; do
+        if [[ -r "$_omz_directories" ]]; then
+            source "$_omz_directories"
+            break
+        fi
+    done
+    if ! (( ${+aliases[md]} )); then
+        local _dfile
+        for _dfile in \
+            "$HOME/Library/Caches/antidote"/**/ohmyzsh/ohmyzsh/lib/directories.zsh(N) \
+            "$HOME/.cache/antidote"/**/ohmyzsh/ohmyzsh/lib/directories.zsh(N); do
+            [[ -r "${_dfile}" ]] && { source "${_dfile}"; break; }
+        done
+        unset _dfile
+    fi
+    unset _omz_directories
+    if (( ${+functions[.zsh-lsd]} )); then
+        .zsh-lsd
+    fi
 fi
+
+# ---------- Cross-terminal zsh history (~/.zsh_history) ----------
+# zsh-saneopt's append_history alone only flushes when a shell exits, so
+# other tabs do not see new commands until then. INC_APPEND_HISTORY writes
+# each line immediately; SHARE_HISTORY pulls in lines other sessions wrote.
+# Cost: small extra read/write on the history file (fine for local disks).
+# This affects native history widgets (e.g. HSM on Ctrl-R). Atuin is separate.
+setopt INC_APPEND_HISTORY
+setopt SHARE_HISTORY
+setopt HIST_IGNORE_DUPS
 
 # SSH completion: config Host aliases + suppress passwd users.
 # Must load after compinit — see zsh/ssh-completion.zsh for details.
