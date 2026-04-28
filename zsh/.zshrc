@@ -211,17 +211,40 @@ source "${ZSH_DOTFILES}/ssh-completion.zsh"
 # implementation references functions like `git_current_branch` and
 # `git_main_branch` which live in OMZ's lib/git.zsh — not in the plugin
 # subdir. Antidote's `path:plugins/git` only pulls the plugin dir, so
-# we source the lib explicitly from antidote's cache.
-# Our personal aliases.zsh also relies on `git_main_branch` for `grbom`.
-for _omz_git_lib in \
-    "$HOME/Library/Caches/antidote/github.com/ohmyzsh/ohmyzsh/lib/git.zsh" \
-    "$HOME/.cache/antidote/github.com/ohmyzsh/ohmyzsh/lib/git.zsh"; do
-    if [[ -r "$_omz_git_lib" ]]; then
-        source "$_omz_git_lib"
-        break
-    fi
+# we source the lib explicitly. Do not hardcode only ~/Library and ~/.cache:
+# antidote may use $XDG_CACHE_HOME or other roots; derive lib/ from the
+# plugins/git path already added to $fpath by the bundle.
+_omz_git_lib=""
+for _d in "${fpath[@]}"; do
+    [[ "${_d}" == */ohmyzsh/ohmyzsh/plugins/git ]] || continue
+    _omz_git_lib="${_d:A:h:h}/lib/git.zsh"
+    [[ -r "${_omz_git_lib}" ]] && break
+    _omz_git_lib=""
 done
-unset _omz_git_lib
+if [[ ! -r "${_omz_git_lib}" ]]; then
+    _omz_git_lib=""
+    for _candidate in \
+        "$HOME/Library/Caches/antidote/github.com/ohmyzsh/ohmyzsh/lib/git.zsh" \
+        "$HOME/.cache/antidote/github.com/ohmyzsh/ohmyzsh/lib/git.zsh"; do
+        [[ -r "${_candidate}" ]] || continue
+        _omz_git_lib="${_candidate}"
+        break
+    done
+    unset _candidate
+fi
+if [[ ! -r "${_omz_git_lib}" ]]; then
+    for _gfile in \
+        "${XDG_CACHE_HOME:-${HOME}/.cache}/antidote"/**/ohmyzsh/ohmyzsh/lib/git.zsh(N) \
+        "${HOME}/Library/Caches/antidote"/**/ohmyzsh/ohmyzsh/lib/git.zsh(N) \
+        "${HOME}/.cache/antidote"/**/ohmyzsh/ohmyzsh/lib/git.zsh(N); do
+        [[ -r "${_gfile}" ]] && { _omz_git_lib="${_gfile}"; break; }
+    done
+    unset _gfile
+fi
+if [[ -r "${_omz_git_lib}" ]]; then
+    source "${_omz_git_lib}"
+fi
+unset _omz_git_lib _d
 
 # Git alias → _git completion (glog, gco, …); see git-alias-completion.zsh.
 source "${ZSH_DOTFILES}/git-alias-completion.zsh"
