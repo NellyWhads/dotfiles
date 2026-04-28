@@ -82,6 +82,57 @@ for _antidote_path in \
 done
 unset _antidote_path
 
+# ---------- Git completion: native zsh _git before Homebrew / Linuxbrew wrapper ----------
+# Brew puts a bash-backed `_git` in site-functions ahead of zsh's stock `_git`.
+# We symlink the stock file into a tiny fpath prefix so it wins.
+# Ubuntu/Debian (apt zsh): no brew `_git` shim — skip pinning entirely. A pin
+# symlink synced from a Mac (pointing at /opt/homebrew/...) breaks Linux; remove
+# it when we are not on a brew-style layout.
+_GIT_COMPDEF_PIN="${XDG_DATA_HOME:-${HOME}/.local/share}/dotfiles-zsh/git-native-compdef"
+_git_pin_brew_shim=0
+if [[ "${OSTYPE}" == darwin* ]]; then
+    _git_pin_brew_shim=1
+elif [[ -r /home/linuxbrew/.linuxbrew/share/zsh/site-functions/_git ]]; then
+    # Linuxbrew uses the same site-functions wrapper as macOS Homebrew.
+    _git_pin_brew_shim=1
+fi
+if (( _git_pin_brew_shim )); then
+    _git_native_src=""
+    for _candidate in \
+        /opt/homebrew/opt/zsh/share/zsh/functions/_git \
+        /usr/local/opt/zsh/share/zsh/functions/_git \
+        /home/linuxbrew/.linuxbrew/opt/zsh/share/zsh/functions/_git; do
+        [[ -r "${_candidate}" ]] || continue
+        _git_native_src="${_candidate}"
+        break
+    done
+    unset _candidate
+    if [[ -z "${_git_native_src}" ]] && [[ -r "/usr/share/zsh/${ZSH_VERSION}/functions/_git" ]]; then
+        _git_native_src="/usr/share/zsh/${ZSH_VERSION}/functions/_git"
+    fi
+    if [[ -r "${_git_native_src}" ]]; then
+        mkdir -p "${_GIT_COMPDEF_PIN}"
+        ln -sfn "${_git_native_src}" "${_GIT_COMPDEF_PIN}/_git"
+        fpath=("${_GIT_COMPDEF_PIN}" $fpath)
+    else
+        for _git_bash_completion in \
+            /opt/homebrew/share/zsh/site-functions/git-completion.bash \
+            /usr/local/share/zsh/site-functions/git-completion.bash \
+            /home/linuxbrew/.linuxbrew/share/zsh/site-functions/git-completion.bash; do
+            if [[ -r "${_git_bash_completion}" ]]; then
+                zstyle ':completion:*:*:git:*' script "${_git_bash_completion}"
+                break
+            fi
+        done
+        unset _git_bash_completion
+    fi
+    unset _git_native_src
+else
+    # Drop stale or cross-machine-synced pin (e.g. target is Homebrew on macOS).
+    [[ -e "${_GIT_COMPDEF_PIN}/_git" ]] && command rm -f "${_GIT_COMPDEF_PIN}/_git"
+fi
+unset _git_pin_brew_shim _GIT_COMPDEF_PIN
+
 # ---------- Robust completion init (the two-phase pattern) ----------
 # Why two phases:
 #   Phase 1: compinit defines `compdef` so plugins that call it during sourcing
