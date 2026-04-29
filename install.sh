@@ -5,9 +5,8 @@ set -e
 
 DOTFILE_REPO_ROOT='https://github.com/NellyWhadsDev/dotfiles'
 
-# Sudo check
-if [ "$USER" != "root" ]; then
-    printf '\e[31;1m%s\e[0m\n' "Warning: This script is expected to run as root" 1>&2
+# SUDO_USER fallback (set by `sudo` itself; falls back to current user)
+if [ -z "${SUDO_USER:-}" ]; then
     SUDO_USER=$USER
 fi
 
@@ -57,6 +56,20 @@ else
     exit 1
 fi
 
+# OS-specific sudo policy
+if [ "$MACHINE" = "MacOS" ] && [ "$(id -u)" -eq 0 ]; then
+    printf '\e[31;1m%s\e[0m\n' "Error: Don't run this script under sudo on macOS." 1>&2
+    printf '\e[33m%s\e[0m\n' "  Homebrew refuses to run as root. Re-run as your user:" 1>&2
+    printf '\n  %s\n\n' "    ./install.sh${1:+ $*}" 1>&2
+    printf '\e[33m%s\e[0m\n' "  The script will prompt for your password where it actually" 1>&2
+    printf '\e[33m%s\e[0m\n' "  needs root (writing /etc/shells, running chsh)." 1>&2
+    exit 1
+fi
+if [ "$USER" != "root" ] && { [ "$MACHINE" = "Ubuntu" ] || [ "$MACHINE" = "Arch" ]; }; then
+    printf '\e[33m%s\e[0m\n' "Note: On $MACHINE the script will use inline sudo for apt/pacman, /etc/shells, chsh." 1>&2
+    printf '\e[33m%s\e[0m\n' "      You'll be prompted for your password as needed." 1>&2
+fi
+
 # Get UI type from CLI args
 export UI_TYPE=default
 if [ "${1-}" = "--headless" ]; then
@@ -64,8 +77,8 @@ if [ "${1-}" = "--headless" ]; then
      export UI_TYPE="headless"
 fi
 
-export REPOS_DIR=$HOME/Repos
-printf '\e[34m%s\e[0m\n' "Setting up 'Repos' dir @ '$REPOS_DIR'..." 1>&2
+export REPOS_DIR=$HOME/workspaces/public
+printf '\e[34m%s\e[0m\n' "Setting up public workspaces dir @ '$REPOS_DIR'..." 1>&2
 mkdir -p $REPOS_DIR
 
 printf '\e[34m%s\e[0m\n' "Setting script permissions..." 1>&2
@@ -73,29 +86,35 @@ chmod +x ./*/install.sh
 
 printf '\e[34m%s\e[0m\n' "Installing universal dependencies..." 1>&2
 if [ "$MACHINE" = "Ubuntu" ]; then
-    apt-get update
-    apt-get install curl git -y
+    sudo apt-get update
+    sudo apt-get install curl git -y
 elif [ "$MACHINE" = "MacOS" ]; then
-    ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)" </dev/null
+    if ! command -v brew &>/dev/null; then
+        if [ ! -t 0 ]; then
+            printf '\e[31;1m%s\e[0m\n' "Homebrew must be installed from an interactive terminal (stdin is not a TTY)." 1>&2
+            printf '\e[33m%s\e[0m\n' "Run this script from Terminal.app or iTerm, not from Cursor/IDE:" 1>&2
+            printf '  %s\n' "cd \"$(pwd)\" && ./install.sh $*" 1>&2
+            exit 1
+        fi
+        /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+    fi
     brew install curl git
 elif [ "$MACHINE" = "Arch" ]; then
     pacman -Sy --noconfirm
     pacman -S curl git --noconfirm
 fi
 
-printf '\e[34m%s\e[0m\n' "Installing Dependency: UV ..." 1>&2
-if [ -z "${UV_SKIP_INSTALL:-}" ] && ! uv --version &>/dev/null; then
-    curl -LsSf https://astral.sh/uv/install.sh | sh
-fi
-
-# ZSH setup
-(cd zsh ; ./install.sh)
+# mise setup
+(cd mise ; ./install.sh)
 
 # Tmux setup
 (cd tmux ; ./install.sh)
 
-# VSCode setup
-(cd vscode ; ./install.sh)
+# ZSH setup
+(cd zsh ; ./install.sh)
+
+# Cursor setup
+(cd cursor ; ./install.sh)
 
 # User setup
 if [ ! -f $HOME/.gitconfig ]; then
@@ -103,6 +122,13 @@ if [ ! -f $HOME/.gitconfig ]; then
     git config --global user.name "Nelly Whads"
     git config --global user.email "nellywhads@gmail.com"
 fi
+
+# Sensible global git defaults — idempotent, safe to apply on every run.
+# delta-specific settings are applied by zsh/install.sh.
+printf '\e[34m%s\e[0m\n' "Applying global git defaults..." 1>&2
+git config --global push.autoSetupRemote true   # no more `git push --set-upstream` boilerplate
+git config --global pull.rebase true            # avoid accidental merge commits from `git pull`
+git config --global rerere.enabled true         # remember conflict resolutions across rebases
 
 printf '\n\e[34;1m%s\e[0m\n\n' "Done setting up OS tools" 1>&2
 exit 0

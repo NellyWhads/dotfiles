@@ -1,0 +1,12 @@
+# tealdeer config — symlinked to ~/.config/tealdeer/config.toml by zsh/install.sh
+# https://tealdeer-rs.github.io/tealdeer/config.html
+
+[updates]
+# Auto-refresh the pages cache on first invocation each interval, so
+# `tldr <command>` always works without remembering to `tldr --update`.
+auto_update = true
+auto_update_interval_hours = 720    # 30 days
+
+[display]
+# Don't pipe through less by default — pages are short.
+use_pager = false

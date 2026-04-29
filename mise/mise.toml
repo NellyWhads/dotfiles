@@ -1,0 +1,34 @@
+# See https://mise.jdx.dev/configuration.html
+
+[settings]
+# Required for [hooks] (e.g. postinstall)
+experimental = true
+
+[hooks]
+# Sync shell completions for active mise tools (version matches current env)
+postinstall = "mise exec -- mise-completions-sync"
+
+[tools]
+uv = "latest"
+# Node managed here instead of via lukechilds/zsh-nvm (which sourced ~700 lines
+# of bash on every shell startup). Project-level overrides via .mise.toml /
+# .tool-versions still work. Drop this line if you don't use node.
+node = "lts"
+# GitHub backend: key is "github:owner/repo", value is version (see https://mise.jdx.dev/dev-tools/backends/github.html)
+"github:alltuner/mise-completions-sync" = "latest"
+
+# --- Modern CLI tools — shell integration lives in zsh/.zshrc ---
+zoxide   = "latest"   # smart `cd` with frecency (use `z foo`, or `zi` for fzf picker)
+bat      = "latest"   # `cat` w/ syntax highlighting + line numbers (also powers fzf previews)
+ripgrep  = "latest"   # 10x faster grep, sane defaults
+fd       = "latest"   # simpler/faster `find`; backs FZF_DEFAULT_COMMAND
+delta    = "latest"   # side-by-side syntax-highlighted git diff viewer
+# tealdeer (`tldr`) is installed by zsh/install.sh — recent tealdeer
+# releases stopped publishing binaries to GitHub Releases, so neither
+# mise's default registry nor the aqua backend can fetch them. brew
+# (macOS) and cargo (Linux fallback) handle it directly.
+atuin    = "latest"   # SQLite-backed shell history (local-only by default)
+
+# Work- or machine-specific [env] (registry tokens, W&B, etc.): use
+# ~/.config/mise/config.toml, `mise.toml` in a private path, or env vars — do not
+# commit secrets to this public repo.

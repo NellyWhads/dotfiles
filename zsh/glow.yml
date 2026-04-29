@@ -1,0 +1,6 @@
+# Glow — terminal Markdown reader. Symlinked to ~/.config/glow/glow.yml by zsh/install.sh
+# https://github.com/charmbracelet/glow
+style: auto
+pager: true
+mouse: true
+showLineNumbers: false

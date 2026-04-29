@@ -1,0 +1,46 @@
+# antidote plugin list. Loaded by ~/.zshrc.
+# Annotations: kind:defer = lazy-loaded after first prompt for speed.
+# Plugin order is intentional — see comments below.
+
+# --- Theme ---
+# Prompt is now handled by Starship (see end of .zshrc). Starship is a
+# Rust binary that's much faster than alien-minimal and has a built-in
+# `container` module that detects Docker/Podman natively. Config lives
+# in zsh/starship.toml, symlinked to ~/.config/starship.toml.
+
+# --- Oh-my-zsh plugins (antidote pulls only the named subdir, not the
+# whole OMZ framework). All are tiny and replace what used to live in
+# zsh/aliases.zsh. ---
+ohmyzsh/ohmyzsh path:plugins/git
+ohmyzsh/ohmyzsh path:plugins/common-aliases
+ohmyzsh/ohmyzsh path:plugins/command-not-found
+ohmyzsh/ohmyzsh path:plugins/cp
+ohmyzsh/ohmyzsh path:plugins/safe-paste
+ohmyzsh/ohmyzsh path:plugins/tmux
+ohmyzsh/ohmyzsh path:plugins/debian
+ohmyzsh/ohmyzsh path:plugins/uv
+z-shell/zsh-lsd
+
+# --- Sane defaults (setopt tweaks for things that should've been zsh defaults) ---
+willghatch/zsh-saneopt
+
+# --- More completions (lots of extras for Docker, AWS CLI, kubectl, ...) ---
+zsh-users/zsh-completions
+
+# --- fzf-tab: replaces zsh's built-in completion menu with fzf. Big UX
+# upgrade for git/uv/mise/docker/etc. completions. MUST load AFTER compinit
+# (handled by .zshrc ordering) and BEFORE plugins that wrap widgets like
+# zsh-autosuggestions / fast-syntax-highlighting. ---
+Aloxaf/fzf-tab
+
+# --- Autosuggestions + syntax highlighting (deferred — heaviest plugins) ---
+zsh-users/zsh-autosuggestions               kind:defer
+zdharma-continuum/fast-syntax-highlighting  kind:defer
+
+# --- History search (deferred; binds Ctrl-R after first prompt, so the
+# late binding wins over fzf's Ctrl-R bound earlier in .zshrc) ---
+zdharma-continuum/history-search-multi-word kind:defer
+
+# --- Niceties (deferred) ---
+djui/alias-tips                             kind:defer
+Valiev/almostontop                          kind:defer
