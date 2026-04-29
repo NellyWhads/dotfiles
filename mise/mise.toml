@@ -9,7 +9,7 @@ experimental = true
 postinstall = "mise exec -- mise-completions-sync"
 
 [tools]
-uv = "0.10.10"
+uv = "latest"
 # Node managed here instead of via lukechilds/zsh-nvm (which sourced ~700 lines
 # of bash on every shell startup). Project-level overrides via .mise.toml /
 # .tool-versions still work. Drop this line if you don't use node.
